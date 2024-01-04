@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://cot6dkdxw7ylq"]
+
+[ext_resource type="Script" path="res://Chunk.gd" id="1_4nphv"]
+
+[node name="Chunk" type="StaticBody3D"]
+process_thread_group = 2
+process_thread_group_order = 0
+process_thread_messages = 0
+collision_layer = 15
+collision_mask = 15
+script = ExtResource("1_4nphv")

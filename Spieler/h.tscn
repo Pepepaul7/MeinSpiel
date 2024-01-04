@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://cnjsr1xr6ns7j"]
+
+[ext_resource type="Script" path="res://Spielercode/CameraRotationFP.gd" id="1_4csdx"]
+
+[node name="h" type="Node3D"]
+script = ExtResource("1_4csdx")
+
+[node name="v" type="Node3D" parent="."]
+
+[node name="Camera" type="Camera3D" parent="v"]
