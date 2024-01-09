@@ -47,6 +47,7 @@ func _init(givenPosition, _isThreaded, chunkJson):
 			generateBlocks()
 		else:
 			blocks = jsonToDictionary(chunkJson)
+		blocks[Vector3(0, 32, 0)] = 1
 		var surface_tool = SurfaceTool.new()
 		surface_tool.begin(Mesh.PRIMITIVE_TRIANGLES)
 		# For each block, add data to the SurfaceTool and generate a collider.
@@ -144,11 +145,6 @@ func _draw_block_mesh(surface_tool, block_sub_position, block_id):
 	var top_uvs = uvs_one
 	var bottom_uvs = uvs_one
 
-	# Allow some blocks to have different top/bottom textures.
-	if block_id == 3: # Grass.
-		top_uvs = _calculate_block_uvs_one(0)
-		bottom_uvs = _calculate_block_uvs_one(2)
-
 	# Es wird überprüft, ob der Block von hier sichtbar ist
 	if (!blocks.has(block_sub_position - Vector3(0, 1, 0))):
 		_draw_block_face(surface_tool, [verts[5], verts[4], verts[0]], uvs_one, Vector3(0, -1, 0)) #Bottom
@@ -180,7 +176,6 @@ func _draw_block_face(surface_tool: SurfaceTool, verts, uvs, normal):
 
 #Es ibt hier zwei Funktionen, da die Dreiecke sonst nicht richtig gezeichnet werden würden
 static func _calculate_block_uvs_one(block_id):
-	# This method only supports square texture sheets.
 	var row = block_id / TEXTURE_SHEET_WIDTH
 	var col = block_id % TEXTURE_SHEET_WIDTH
 
@@ -188,18 +183,15 @@ static func _calculate_block_uvs_one(block_id):
 		TEXTURE_TILE_SIZE * Vector2(col, row),
 		TEXTURE_TILE_SIZE * Vector2(col + 1, row + 1),
 		TEXTURE_TILE_SIZE * Vector2(col + 1, row ),
-		#TEXTURE_TILE_SIZE * Vector2(col, row + 1),
 	]
 
 static func _calculate_block_uvs_two(block_id):
-	# This method only supports square texture sheets.
 	var row = block_id / TEXTURE_SHEET_WIDTH
 	var col = block_id % TEXTURE_SHEET_WIDTH
 
 	return [
 		TEXTURE_TILE_SIZE * Vector2(col, row),
 		TEXTURE_TILE_SIZE * Vector2(col, row + 1),
-		#TEXTURE_TILE_SIZE * Vector2(col + 1, row),
 		TEXTURE_TILE_SIZE * Vector2(col + 1, row + 1),
 	]
 
@@ -215,3 +207,41 @@ static func calculate_block_verts(block_position):
 		Vector3(block_position.x + 1, block_position.y + 1, block_position.z),
 		Vector3(block_position.x + 1, block_position.y + 1, block_position.z + 1),
 	]
+
+#Ab hier bisschen Spiellogik
+
+func startDestroy(pos, direction):
+	var hitBlockPosition = Vector3(0,0,0)
+	#Wenn der Block genau der int ist muss auf die Direction geachtet werden, aus der der Spieler schlägt.
+	if (pos.x == int(pos.x) and direction.x < 0):
+		hitBlockPosition.x = floor(pos.x - 1)
+	else:
+		hitBlockPosition.x = floor(pos.x)
+	if (pos.y == int(pos.y) and direction.y < 0):
+		hitBlockPosition.y = floor(pos.y - 1)
+	else:
+		hitBlockPosition.y = floor(pos.y)
+	if (pos.z == int(pos.z) and direction.z < 0):
+		hitBlockPosition.z = floor(pos.z - 1)
+	else:
+		hitBlockPosition.z = floor(pos.z)
+	blocks.erase(hitBlockPosition)
+	for i in self.get_children():
+		i.queue_free()
+	print(blocks.keys().size())
+	var surface_tool = SurfaceTool.new()
+	surface_tool.begin(Mesh.PRIMITIVE_TRIANGLES)
+	# For each block, add data to the SurfaceTool and generate a collider.
+	for block_position in blocks.keys():
+		if (not blockIsCompleteSurrounded(block_position)):
+			var block_id = blocks[block_position]
+			surface_tool.set_material(material1)
+			_draw_block_mesh(surface_tool, block_position, block_id)
+	surface_tool.generate_tangents()
+	surface_tool.index()
+	var array_mesh = surface_tool.commit()
+	var mi = MeshInstance3D.new()
+	mi.mesh = array_mesh
+	mi.create_trimesh_collision()
+	add_child(mi)
+

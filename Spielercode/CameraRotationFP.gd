@@ -2,8 +2,8 @@ extends Node3D
 
 var camrot_h = 0
 var camrot_v = 0
-var cam_v_max = 75
-var cam_v_min = -55
+var cam_v_max = 90
+var cam_v_min = -90
 var h_sensitivity = 0.1
 var v_sensitivity = 0.1
 var h_acceleration = 10

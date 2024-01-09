@@ -3,7 +3,6 @@ extends Node3D
 @onready var player:Player = preload("res://Spieler/Body.tscn").instantiate()
 var blocks
 var blockInstance
-var stop = false
 var loadedChunks = []
 var renderDistance = 10
 var halfrender:int = renderDistance * 0.5 +0.5
@@ -17,6 +16,9 @@ var thread : Thread
 
 
 func _ready():
+	#Buttons for exit/save
+	$ExitAndSave/Continue.connect("pressed", continueGame);
+	$ExitAndSave/SaveButton.connect("pressed", saveGame);
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	thread = Thread.new()
 	#Lade die Blockfarben
@@ -81,10 +83,20 @@ func renderMapThread(playerpos):
 
 func _input(event):
 	if event.is_action_pressed("ui_cancel"):
-		var filePath = FileAccess.open("res://Resourcen/worldData.json", FileAccess.WRITE)
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-		filePath.store_string(JSON.stringify(mapJson))
-		filePath.close()
-		stop = true
+		$ExitAndSave.visible = true
+		get_tree().paused = true
 		
-#
+func saveGame():
+	print("Saved")
+	var filePath = FileAccess.open("res://Resourcen/worldData.json", FileAccess.WRITE)
+	for i in loadedChunks:
+		mapJson[Vector2(i.pos.x, i.pos.y)] = i.saveMap()
+	filePath.store_string(JSON.stringify(mapJson))
+	filePath.close()
+	print("Saved")
+	
+func continueGame():
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	get_tree().paused = false
+	$ExitAndSave.visible = false

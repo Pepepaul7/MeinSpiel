@@ -42,15 +42,16 @@ func _physics_process(delta):
 			velocity += Vector3(1,0,0).rotated(Vector3(0, 1, 0), deg_to_rad(cameraInstance.camrot_h + 180)) * delta * 1
 	move_and_slide()
 	if jumpCooldown > 0:
-		print(jumpCooldown)
 		jumpCooldown -= 1
-		
 
 func _input(event):
 	if event is InputEventMouseButton:
-		var camera:Camera3D
-		camera = cameraInstance.get_child(0).get_child(0)
-		var parameters = PhysicsRayQueryParameters3D.create(camera.project_ray_origin(event.position), camera.project_ray_normal(event.position) * 100, 0x3, [self])
-		parameters.set_hit_from_inside(true)
-		var collision = get_world_3d().direct_space_state.intersect_ray(parameters)
-		print(collision.collider)
+		if event.button_index == 1: # 1 == left
+			var camera:Camera3D
+			camera = cameraInstance.get_child(0).get_child(0)
+			var parameters = PhysicsRayQueryParameters3D.create(camera.project_ray_origin(event.position), camera.project_ray_origin(event.position) + camera.project_ray_normal(event.position) * 100, 0x3, [self])
+			parameters.set_hit_from_inside(true)
+			var collision = get_world_3d().direct_space_state.intersect_ray(parameters)
+			if (not collision.is_empty()):
+				if (position.distance_squared_to(collision.position) < 5):
+					collision.collider.get_parent().get_parent().startDestroy(collision.position, camera.project_ray_normal(event.position))
