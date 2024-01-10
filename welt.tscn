@@ -14,22 +14,24 @@ process_mode = 3
 visible = false
 layout_mode = 3
 anchors_preset = 0
-offset_right = 279.0
-offset_bottom = 143.0
+offset_left = 461.0
+offset_top = 248.0
+offset_right = 669.0
+offset_bottom = 349.0
 
 [node name="SaveButton" type="Button" parent="ExitAndSave"]
 layout_mode = 0
-offset_left = 7.0
-offset_top = 5.0
-offset_right = 84.0
-offset_bottom = 36.0
+offset_left = 8.0
+offset_top = 19.0
+offset_right = 85.0
+offset_bottom = 50.0
 scale = Vector2(0.826154, 1.18863)
 text = "Save"
 
 [node name="Continue" type="Button" parent="ExitAndSave"]
 layout_mode = 0
-offset_left = 120.0
-offset_top = 5.0
-offset_right = 184.0
-offset_bottom = 42.0
+offset_left = 117.0
+offset_top = 19.0
+offset_right = 196.0
+offset_bottom = 56.0
 text = "Continue"

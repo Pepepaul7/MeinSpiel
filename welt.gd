@@ -17,6 +17,7 @@ var thread : Thread
 
 func _ready():
 	#Buttons for exit/save
+	$ExitAndSave.position = (Vector2(get_viewport().size) - $ExitAndSave.size) / 2
 	$ExitAndSave/Continue.connect("pressed", continueGame);
 	$ExitAndSave/SaveButton.connect("pressed", saveGame);
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
