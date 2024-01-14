@@ -10,6 +10,7 @@ var material1 = preload("res://Resourcen/dirt.tres")
 #Dictionary mit Blöcken
 var blocks = {}
 var blocksToAdd = []
+var differenceBlocks = {}
 
 const TEXTURE_SHEET_WIDTH = 8
 const TEXTURE_TILE_SIZE = 1.0 / TEXTURE_SHEET_WIDTH
@@ -46,8 +47,8 @@ func _init(givenPosition, _isThreaded, chunkJson):
 		if chunkJson == null:
 			generateBlocks()
 		else:
-			blocks = jsonToDictionary(chunkJson)
-		blocks[Vector3(0, 32, 0)] = 1
+			differenceBlocks = jsonToDictionary(chunkJson)
+		
 		var surface_tool = SurfaceTool.new()
 		surface_tool.begin(Mesh.PRIMITIVE_TRIANGLES)
 		# For each block, add data to the SurfaceTool and generate a collider.
@@ -84,7 +85,8 @@ func generateChunk(chunkJson):
 	if chunkJson == null:
 		generateBlocks()
 	else:
-		blocks = jsonToDictionary(chunkJson)
+		differenceBlocks = jsonToDictionary(chunkJson)
+		getNewBlocksFromDifference()
 	generateMesh()
 	
 func deleteChildren():
@@ -97,7 +99,7 @@ func unloadChunk():
 	return saveMap()
 
 func saveMap():
-	return JSON.parse_string(JSON.stringify(blocks))
+	return JSON.parse_string(JSON.stringify(differenceBlocks))
 
 #Hier werden die Blöcke erstellt, falls noch keine Json existieren sollte. 
 func generateBlocks():
@@ -208,6 +210,14 @@ static func calculate_block_verts(block_position):
 		Vector3(block_position.x + 1, block_position.y + 1, block_position.z + 1),
 	]
 
+
+func getNewBlocksFromDifference():
+	generateBlocks()
+	for i in differenceBlocks.keys():
+		if (differenceBlocks[i] == -1):
+			blocks.erase(i)
+		else:
+			blocks[i] = differenceBlocks[i]
 #Ab hier bisschen Spiellogik
 
 func startDestroy(pos, direction):
@@ -226,9 +236,9 @@ func startDestroy(pos, direction):
 	else:
 		hitBlockPosition.z = floor(pos.z)
 	blocks.erase(hitBlockPosition)
+	differenceBlocks[hitBlockPosition] = -1
 	for i in self.get_children():
 		i.queue_free()
-	print(blocks.keys().size())
 	var surface_tool = SurfaceTool.new()
 	surface_tool.begin(Mesh.PRIMITIVE_TRIANGLES)
 	# For each block, add data to the SurfaceTool and generate a collider.

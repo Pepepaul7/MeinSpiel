@@ -38,11 +38,12 @@ func jsonToDictionary(json):
 	var newString:String
 	var eray: Array
 	var rueckgabe = {}
-	for i in json.keys():
-		newString = i.erase(0, 1)
-		newString = newString.erase(newString.length() - 1, 1)
-		eray = newString.split(',')
-		rueckgabe[Vector2(float(eray[0]), float(eray[1]))] = json[i]
+	if (json != null):
+		for i in json.keys():
+			newString = i.erase(0, 1)
+			newString = newString.erase(newString.length() - 1, 1)
+			eray = newString.split(',')
+			rueckgabe[Vector2(float(eray[0]), float(eray[1]))] = json[i]
 	return rueckgabe
 
 func isInLoadedFiles(x, z):
