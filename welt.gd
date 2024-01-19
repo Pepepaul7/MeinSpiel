@@ -4,7 +4,7 @@ extends Node3D
 var blocks
 var blockInstance
 var loadedChunks = []
-var renderDistance = 10
+var renderDistance = 5
 var halfrender:int = renderDistance * 0.5 +0.5
 var despawnBonusDistance = 2
 

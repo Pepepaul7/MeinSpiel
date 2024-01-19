@@ -99,6 +99,7 @@ func unloadChunk():
 	return saveMap()
 
 func saveMap():
+	#Die Klammern von den Vektoren werden abgespeichert und die nicht veränderten Chunks auch. Kann noch verbessert werden
 	return JSON.parse_string(JSON.stringify(differenceBlocks))
 
 #Hier werden die Blöcke erstellt, falls noch keine Json existieren sollte. 
