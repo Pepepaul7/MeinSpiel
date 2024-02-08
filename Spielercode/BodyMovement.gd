@@ -12,8 +12,8 @@ var inventoryInstance = inventory.instantiate()
 
 func _ready():
 	add_child(inventoryInstance)
-	inventoryInstance.visible = false
 	add_child(cameraInstance)
+	#inventoryInstance.drawHotbar()
 	
 	
 	
@@ -21,7 +21,7 @@ func _physics_process(delta):
 #Jumping/Falling
 	if not inventoryOpen:
 		if Input.is_action_just_pressed("EPressed"):
-			inventoryInstance.visible = true
+			inventoryInstance.openInventory()
 			inventoryOpen = true
 		if is_on_floor():
 			velocity.x = 0
@@ -32,11 +32,11 @@ func _physics_process(delta):
 				else:
 					velocity += Vector3(1,0,0).rotated(Vector3(0, 1, 0), deg_to_rad(cameraInstance.camrot_h + 90)) * delta * 180
 			if Input.is_key_pressed(KEY_S):
-				velocity += Vector3(1,0,0).rotated(Vector3(0, 1, 0), deg_to_rad(cameraInstance.camrot_h - 90)) * delta * 60
+				velocity += Vector3(1,0,0).rotated(Vector3(0, 1, 0), deg_to_rad(cameraInstance.camrot_h - 90)) * delta * 180
 			if Input.is_key_pressed(KEY_D):
-				velocity += Vector3(1,0,0).rotated(Vector3(0, 1, 0), deg_to_rad(cameraInstance.camrot_h)) * delta * 60
+				velocity += Vector3(1,0,0).rotated(Vector3(0, 1, 0), deg_to_rad(cameraInstance.camrot_h)) * delta * 180
 			if Input.is_key_pressed(KEY_A):
-				velocity += Vector3(1,0,0).rotated(Vector3(0, 1, 0), deg_to_rad(cameraInstance.camrot_h + 180)) * delta * 60
+				velocity += Vector3(1,0,0).rotated(Vector3(0, 1, 0), deg_to_rad(cameraInstance.camrot_h + 180)) * delta * 180
 			if Input.is_key_pressed(KEY_SPACE) and jumpCooldown == 0:
 				jumpCooldown = 5
 				velocity.y += 300 * delta
@@ -45,11 +45,11 @@ func _physics_process(delta):
 			if Input.is_key_pressed(KEY_W):
 				velocity += Vector3(1,0,0).rotated(Vector3(0, 1, 0), deg_to_rad(cameraInstance.camrot_h + 90)) * delta * 2
 			if Input.is_key_pressed(KEY_S):
-				velocity += Vector3(1,0,0).rotated(Vector3(0, 1, 0), deg_to_rad(cameraInstance.camrot_h - 90)) * delta * 1
+				velocity += Vector3(1,0,0).rotated(Vector3(0, 1, 0), deg_to_rad(cameraInstance.camrot_h - 90)) * delta * 2
 			if Input.is_key_pressed(KEY_D):
-				velocity += Vector3(1,0,0).rotated(Vector3(0, 1, 0), deg_to_rad(cameraInstance.camrot_h)) * delta * 1
+				velocity += Vector3(1,0,0).rotated(Vector3(0, 1, 0), deg_to_rad(cameraInstance.camrot_h)) * delta * 2
 			if Input.is_key_pressed(KEY_A):
-				velocity += Vector3(1,0,0).rotated(Vector3(0, 1, 0), deg_to_rad(cameraInstance.camrot_h + 180)) * delta * 1
+				velocity += Vector3(1,0,0).rotated(Vector3(0, 1, 0), deg_to_rad(cameraInstance.camrot_h + 180)) * delta * 2
 	else:
 		if not is_on_floor():
 			velocity.y -= 10 * delta
@@ -57,7 +57,7 @@ func _physics_process(delta):
 			velocity.x = 0
 			velocity.z = 0
 		if Input.is_action_just_pressed("EPressed"):
-			inventoryInstance.visible = false
+			inventoryInstance.closeInventory()
 			inventoryOpen = false
 	move_and_slide()
 	if jumpCooldown > 0:
