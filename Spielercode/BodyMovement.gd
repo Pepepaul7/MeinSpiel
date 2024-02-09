@@ -13,6 +13,10 @@ var inventoryInstance = inventory.instantiate()
 func _ready():
 	add_child(inventoryInstance)
 	add_child(cameraInstance)
+	#Buttons for exit/save
+	$ExitAndSave.position = (Vector2(get_viewport().size) - $ExitAndSave.size) / 2
+	$ExitAndSave/Continue.connect("pressed", continueGame);
+	$ExitAndSave/SaveButton.connect("pressed", get_parent().saveGame);
 	#inventoryInstance.drawHotbar()
 	
 	
@@ -62,6 +66,13 @@ func _physics_process(delta):
 	move_and_slide()
 	if jumpCooldown > 0:
 		jumpCooldown -= 1
+	if Input.is_action_just_pressed("ui_cancel") and not inventoryOpen:
+		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+		$ExitAndSave.visible = true
+		get_tree().paused = true
+	if Input.is_action_just_pressed("ui_cancel") and inventoryOpen:
+		inventoryInstance.closeInventory()
+		inventoryOpen = false
 
 func _input(event):
 	if event.is_action_pressed("LeftClick"):
@@ -74,3 +85,9 @@ func _input(event):
 			if (not collision.is_empty()):
 				if (position.distance_squared_to(collision.position) < 5):
 					collision.collider.get_parent().get_parent().startDestroy(collision.position, camera.project_ray_normal(event.position))
+	
+
+func continueGame():
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	get_tree().paused = false
+	$ExitAndSave.visible = false

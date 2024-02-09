@@ -17,10 +17,6 @@ var thread : Thread
 
 func _ready():
 	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
-	#Buttons for exit/save
-	$ExitAndSave.position = (Vector2(get_viewport().size) - $ExitAndSave.size) / 2
-	$ExitAndSave/Continue.connect("pressed", continueGame);
-	$ExitAndSave/SaveButton.connect("pressed", saveGame);
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	thread = Thread.new()
 	file = FileAccess.get_file_as_string("res://Resourcen/worldData.json")
@@ -83,11 +79,7 @@ func renderMapThread(playerpos):
 	call_deferred("addChunkToWorld")
 	
 
-func _input(event):
-	if event.is_action_pressed("ui_cancel"):
-		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-		$ExitAndSave.visible = true
-		get_tree().paused = true
+
 		
 func saveGame():
 	print("Saved")
@@ -98,7 +90,3 @@ func saveGame():
 	filePath.close()
 	print("Saved")
 	
-func continueGame():
-	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	get_tree().paused = false
-	$ExitAndSave.visible = false
