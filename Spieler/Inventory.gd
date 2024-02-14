@@ -3,7 +3,7 @@ extends Node2D
 var inventories = []
 var inventoryBlueprint = preload("res://Spieler/inventoryBlock.gd")
 var currentInventory : InventoryBlock
-var sizeOfItems
+var sizeOfItems : int
 var currentHeight : int
 var currentWidth :int
 
@@ -17,12 +17,18 @@ func _ready():
 	addHotbar()
 
 func addHotbar():
-	var items = []
-	for i in 10:
-		items.append(Vector2(get_viewport().size.x / 3 + i * sizeOfItems, get_viewport().size.y * 0.9))
+	var boxes = []
+	for i in 9:
+		var currentBox : TextureRect
+		currentBox = TextureRect.new()
+		currentBox.texture = ResourceLoader.load("res://Resourcen/Inventories/items/basic/pixil-frame-0 (1).png")
+		currentBox.set_position(Vector2(get_viewport().size.x / 3 + i * sizeOfItems, get_viewport().size.y * 0.9))
+		currentBox.size = Vector2(sizeOfItems, sizeOfItems)
+		add_child(currentBox)
+		boxes.append(currentBox)
 	currentHeight = sizeOfItems
 	currentWidth = sizeOfItems * 9
-	currentInventory = inventoryBlueprint.new(Vector2((get_viewport().size.x / 2) - (currentWidth / 2) , get_viewport().size.y * 0.85), Vector2(sizeOfItems * 9, sizeOfItems), "res://Resourcen/hotbar2.png", items, null, sizeOfItems)
+	currentInventory = inventoryBlueprint.new(Vector2((get_viewport().size.x / 2) - (currentWidth / 2) , get_viewport().size.y * 0.85), Vector2(sizeOfItems * 9, sizeOfItems), "res://Resourcen/hotbar2.png", boxes, null, sizeOfItems)
 	add_child(currentInventory)
 
 #So entstand die Hotbar
