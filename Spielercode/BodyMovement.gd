@@ -27,6 +27,8 @@ func _physics_process(delta):
 		if Input.is_action_just_pressed("EPressed"):
 			inventoryInstance.openInventory()
 			inventoryOpen = true
+			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+			cameraInstance.process_mode = Node.PROCESS_MODE_DISABLED
 		if is_on_floor():
 			velocity.x = 0
 			velocity.z = 0
@@ -63,6 +65,8 @@ func _physics_process(delta):
 		if Input.is_action_just_pressed("EPressed"):
 			inventoryInstance.closeInventory()
 			inventoryOpen = false
+			cameraInstance.process_mode = Node.PROCESS_MODE_INHERIT
+			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	move_and_slide()
 	if jumpCooldown > 0:
 		jumpCooldown -= 1
@@ -73,6 +77,8 @@ func _physics_process(delta):
 	if Input.is_action_just_pressed("ui_cancel") and inventoryOpen:
 		inventoryInstance.closeInventory()
 		inventoryOpen = false
+		cameraInstance.process_mode = Node.PROCESS_MODE_INHERIT
+		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 func _input(event):
 	if event.is_action_pressed("LeftClick"):
