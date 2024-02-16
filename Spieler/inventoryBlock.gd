@@ -27,3 +27,9 @@ func _init(_topLeft, _size, _imageLink, _boxes, _items, _sizeOfItems):
 		boxes[i].set_position(Vector2(_boxes[i].x, _boxes[i].y))
 		boxes[i].size = Vector2(sizeOfItems, sizeOfItems)
 		add_child(boxes[i])
+
+func takeItem(clickedPosition):
+	if clickedPosition < topLeft + size and clickedPosition > topLeft:
+		
+	else:
+		return false

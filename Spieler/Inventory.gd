@@ -6,9 +6,7 @@ var currentInventory : InventoryBlock
 var sizeOfItems : int
 var currentHeight : int
 var currentWidth :int
-
-var lineWidth = 2
-var inventorySize = 5
+var draggedItem : int #Index of dragged item. If nothing is dragged == null
 
 func _ready():
 	sizeOfItems = (get_viewport().size.x * 1/3 / 8)
@@ -23,6 +21,7 @@ func addHotbar():
 	currentWidth = sizeOfItems * 9
 	currentInventory = inventoryBlueprint.new(Vector2((get_viewport().size.x / 2) - (currentWidth / 2) , get_viewport().size.y * 0.85), Vector2(sizeOfItems * 9, sizeOfItems), "res://Resourcen/hotbar2.png", boxes, null, sizeOfItems)
 	add_child(currentInventory)
+	inventories.append(currentInventory)
 	
 func addMainInventory():
 	var boxes = []
@@ -33,9 +32,14 @@ func addMainInventory():
 	currentWidth = sizeOfItems * 9
 	currentInventory = inventoryBlueprint.new(Vector2((get_viewport().size.x / 2) - (currentWidth / 2) , (get_viewport().size.y / 2) - (currentHeight / 2)), Vector2(currentWidth, currentHeight), "res://Resourcen/inventory.png", boxes, null, sizeOfItems)
 	add_child(currentInventory)
+	inventories.append(currentInventory)
 
 #So entstand die Hotbar
 #drawInventory(Vector2(get_viewport().size.x / 3, get_viewport().size.y * 0.9), Vector2(get_viewport().size.x * 2/3, get_viewport().size.y * 0.9 - get_viewport().size.x * 1/3 / 9), 10, 2)
+
+func handleClick(positionOfClick):
+	print(positionOfClick)
+
 
 func openInventory():
 	print("Open")

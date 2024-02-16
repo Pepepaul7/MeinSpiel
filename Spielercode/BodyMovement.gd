@@ -81,7 +81,7 @@ func _physics_process(delta):
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 func _input(event):
-	if event.is_action_pressed("LeftClick"):
+	if event.is_action_pressed("LeftClick") and not inventoryOpen:
 		if event.button_index == 1: # 1 == left
 			var camera:Camera3D
 			camera = cameraInstance.get_child(0).get_child(0)
@@ -91,6 +91,8 @@ func _input(event):
 			if (not collision.is_empty()):
 				if (position.distance_squared_to(collision.position) < 5):
 					collision.collider.get_parent().get_parent().startDestroy(collision.position, camera.project_ray_normal(event.position))
+	if event.is_action_pressed("LeftClick") and inventoryOpen:
+		inventoryInstance.handleClick(event.position)
 	
 
 func continueGame():
