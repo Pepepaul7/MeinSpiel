@@ -7,6 +7,7 @@ var sizeOfItems : int
 var currentHeight : int
 var currentWidth :int
 var draggedItem : int #Index of dragged item. If nothing is dragged == null
+var draggedFrom : int #Index of Inventory the item is dragged from
 
 func _ready():
 	sizeOfItems = (get_viewport().size.x * 1/3 / 8)
@@ -38,8 +39,16 @@ func addMainInventory():
 #drawInventory(Vector2(get_viewport().size.x / 3, get_viewport().size.y * 0.9), Vector2(get_viewport().size.x * 2/3, get_viewport().size.y * 0.9 - get_viewport().size.x * 1/3 / 9), 10, 2)
 
 func handleClick(positionOfClick):
-	print(positionOfClick)
+	var counter = inventories.size() - 1
+	while (not inventories[counter].takeItem(positionOfClick)):
+		counter -= 1
+		if (counter < 0):
+			dropItem()
+			break
+	print(counter)
 
+func dropItem():
+	print("Drop Item")
 
 func openInventory():
 	print("Open")
