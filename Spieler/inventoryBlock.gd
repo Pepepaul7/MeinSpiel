@@ -34,6 +34,7 @@ func takeItem(clickedPosition):
 		for i in boxes:
 			if newClickedPosition.x < i.position.x + sizeOfItems and newClickedPosition.y < i.position.y + sizeOfItems and newClickedPosition.x > i.position.x and newClickedPosition.y > i.position.y:
 				print(i.position)
+				Input.set_custom_mouse_cursor(i.texture)
 				return true
 	else:
 		return false

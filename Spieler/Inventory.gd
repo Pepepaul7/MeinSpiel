@@ -44,6 +44,7 @@ func handleClick(positionOfClick):
 		counter -= 1
 		if (counter < 0):
 			dropItem()
+			Input.set_custom_mouse_cursor(null)
 			break
 	print(counter)
 
