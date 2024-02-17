@@ -9,6 +9,7 @@ var boxes = [] #TextureRect with position and height
 var items = [] #Item Strings
 var background : TextureRect
 var sizeOfItems
+var draggedItem : int 
 
 func _init(_topLeft, _size, _imageLink, _boxes, _items, _sizeOfItems):
 	size = _size
@@ -31,10 +32,31 @@ func _init(_topLeft, _size, _imageLink, _boxes, _items, _sizeOfItems):
 func takeItem(clickedPosition):
 	if clickedPosition.y < topLeft.y + size.y and clickedPosition.y > topLeft.y and clickedPosition.x < topLeft.x + size.x and clickedPosition.x > topLeft.x:
 		var newClickedPosition = clickedPosition - topLeft
+		var counter = 0
 		for i in boxes:
 			if newClickedPosition.x < i.position.x + sizeOfItems and newClickedPosition.y < i.position.y + sizeOfItems and newClickedPosition.x > i.position.x and newClickedPosition.y > i.position.y:
 				print(i.position)
 				Input.set_custom_mouse_cursor(i.texture)
+				draggedItem = counter
 				return true
+			counter += 1
+	else:
+		return false
+
+func dropItem():
+	boxes[draggedItem].texture = null
+	#items[draggedItem] = null
+
+func switchItem(clickedPosition):
+	if clickedPosition.y < topLeft.y + size.y and clickedPosition.y > topLeft.y and clickedPosition.x < topLeft.x + size.x and clickedPosition.x > topLeft.x:
+		var newClickedPosition = clickedPosition - topLeft
+		var counter = 0
+		for i in boxes:
+			if newClickedPosition.x < i.position.x + sizeOfItems and newClickedPosition.y < i.position.y + sizeOfItems and newClickedPosition.x > i.position.x and newClickedPosition.y > i.position.y:
+				print(i.position)
+				Input.set_custom_mouse_cursor(i.texture)
+				draggedItem = counter
+				return true
+			counter += 1
 	else:
 		return false

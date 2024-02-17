@@ -6,11 +6,11 @@ var currentInventory : InventoryBlock
 var sizeOfItems : int
 var currentHeight : int
 var currentWidth :int
-var draggedItem : int #Index of dragged item. If nothing is dragged == null
-var draggedFrom : int #Index of Inventory the item is dragged from
+var draggedFrom : int #Index of Inventory the item is dragged from. If nothing is dragged == null
 
 func _ready():
 	sizeOfItems = (get_viewport().size.x * 1/3 / 8)
+	draggedFrom = -1
 	addHotbar()
 	addMainInventory()
 
@@ -39,17 +39,37 @@ func addMainInventory():
 #drawInventory(Vector2(get_viewport().size.x / 3, get_viewport().size.y * 0.9), Vector2(get_viewport().size.x * 2/3, get_viewport().size.y * 0.9 - get_viewport().size.x * 1/3 / 9), 10, 2)
 
 func handleClick(positionOfClick):
+	if draggedFrom == -1:
+		dragItem(positionOfClick)
+	else:
+		placeItem(positionOfClick)
+
+func dragItem(positionOfClick):
+	draggedFrom = inventories.size() - 1
+	while (not inventories[draggedFrom].takeItem(positionOfClick)):
+		draggedFrom -= 1
+		if (draggedFrom < 0):
+			break
+	print(draggedFrom)
+	
+func placeItem(positionOfClick):
 	var counter = inventories.size() - 1
-	while (not inventories[counter].takeItem(positionOfClick)):
+	while (not inventories[counter].switchItem(positionOfClick)):
 		counter -= 1
 		if (counter < 0):
 			dropItem()
 			Input.set_custom_mouse_cursor(null)
+			draggedFrom = -1
 			break
+	if counter != -1:
+		inventories[counter].switchItem(positionOfClick)
+		draggedFrom = inventories.size() - 1
 	print(counter)
-
+	
 func dropItem():
-	print("Drop Item")
+	print("DropItem")
+	inventories[draggedFrom].dropItem()
+	
 
 func openInventory():
 	print("Open")
