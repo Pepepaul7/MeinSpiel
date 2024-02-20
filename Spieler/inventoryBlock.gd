@@ -9,7 +9,6 @@ var boxes = [] #TextureRect with position and height
 var items = [] #Item Strings
 var background : TextureRect
 var sizeOfItems
-var draggedItem : int 
 
 func _init(_topLeft, _size, _imageLink, _boxes, _items, _sizeOfItems):
 	size = _size
@@ -22,41 +21,37 @@ func _init(_topLeft, _size, _imageLink, _boxes, _items, _sizeOfItems):
 	background.size = size
 	self.position = topLeft
 	add_child(background)
+	var counter = 0
 	for i in _boxes.size():
 		boxes.append(TextureRect.new())
-		boxes[i].texture = ResourceLoader.load("res://Resourcen/Inventories/items/basic/pixil-frame-0 (1).png")
+		if items[counter] == "a":
+			boxes[i].texture = ResourceLoader.load("res://Resourcen/Inventories/items/basic/pixil-frame-0 (1).png")
+		else:
+			boxes[i].texture = ResourceLoader.load("res://Resourcen/Inventories/items/basic/0.png")
 		boxes[i].set_position(Vector2(_boxes[i].x, _boxes[i].y))
 		boxes[i].size = Vector2(sizeOfItems, sizeOfItems)
 		add_child(boxes[i])
 
-func takeItem(clickedPosition):
+func takeItem(clickedPosition, draggedItem):
 	if clickedPosition.y < topLeft.y + size.y and clickedPosition.y > topLeft.y and clickedPosition.x < topLeft.x + size.x and clickedPosition.x > topLeft.x:
 		var newClickedPosition = clickedPosition - topLeft
-		var counter = 0
-		for i in boxes:
-			if newClickedPosition.x < i.position.x + sizeOfItems and newClickedPosition.y < i.position.y + sizeOfItems and newClickedPosition.x > i.position.x and newClickedPosition.y > i.position.y:
-				print(i.position)
-				Input.set_custom_mouse_cursor(i.texture)
-				draggedItem = counter
+		for i in boxes.size():
+			if newClickedPosition.x < boxes[i].position.x + sizeOfItems and newClickedPosition.y < boxes[i].position.y + sizeOfItems and newClickedPosition.x > boxes[i].position.x and newClickedPosition.y > boxes[i].position.y:
+				print(items[i])
+				Input.set_custom_mouse_cursor(null)
+				if items[i] != "":
+					Input.set_custom_mouse_cursor(boxes[i].texture)
+				var zwischenspeicher : String
+				zwischenspeicher = items[i]
+				items[i] = draggedItem
+				get_parent().draggedItem = zwischenspeicher
+				setTexture(i)
 				return true
-			counter += 1
 	else:
 		return false
 
-func dropItem():
-	boxes[draggedItem].texture = null
-	#items[draggedItem] = null
-
-func switchItem(clickedPosition):
-	if clickedPosition.y < topLeft.y + size.y and clickedPosition.y > topLeft.y and clickedPosition.x < topLeft.x + size.x and clickedPosition.x > topLeft.x:
-		var newClickedPosition = clickedPosition - topLeft
-		var counter = 0
-		for i in boxes:
-			if newClickedPosition.x < i.position.x + sizeOfItems and newClickedPosition.y < i.position.y + sizeOfItems and newClickedPosition.x > i.position.x and newClickedPosition.y > i.position.y:
-				print(i.position)
-				Input.set_custom_mouse_cursor(i.texture)
-				draggedItem = counter
-				return true
-			counter += 1
+func setTexture(counter : int):
+	if items[counter] == "a":
+		boxes[counter].texture = ResourceLoader.load("res://Resourcen/Inventories/items/basic/pixil-frame-0 (1).png")
 	else:
-		return false
+		boxes[counter].texture = ResourceLoader.load("res://Resourcen/Inventories/items/basic/0.png")
