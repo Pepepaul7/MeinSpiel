@@ -63,9 +63,7 @@ func dropItem():
 
 func openInventory():
 	inventories[1].visible = true
-	print("Open")
 	
 func closeInventory():
 	for i in inventories.size() - 1:
 		inventories[i + 1].visible = false
-	print("Close")

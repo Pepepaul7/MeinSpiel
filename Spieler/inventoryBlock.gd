@@ -37,7 +37,6 @@ func takeItem(clickedPosition, draggedItem):
 		var newClickedPosition = clickedPosition - topLeft
 		for i in boxes.size():
 			if newClickedPosition.x < boxes[i].position.x + sizeOfItems and newClickedPosition.y < boxes[i].position.y + sizeOfItems and newClickedPosition.x > boxes[i].position.x and newClickedPosition.y > boxes[i].position.y:
-				print(items[i])
 				Input.set_custom_mouse_cursor(null)
 				if items[i] != "":
 					Input.set_custom_mouse_cursor(boxes[i].texture)
@@ -54,4 +53,4 @@ func setTexture(counter : int):
 	if items[counter] == "a":
 		boxes[counter].texture = ResourceLoader.load("res://Resourcen/Inventories/items/basic/pixil-frame-0 (1).png")
 	else:
-		boxes[counter].texture = ResourceLoader.load("res://Resourcen/Inventories/items/basic/0.png")
+		boxes[counter].texture = null #ResourceLoader.load("res://Resourcen/Inventories/items/basic/0.png")
