@@ -24,10 +24,10 @@ func _init(_topLeft, _size, _imageLink, _boxes, _items, _sizeOfItems):
 	var counter = 0
 	for i in _boxes.size():
 		boxes.append(TextureRect.new())
-		if items[counter] == "a":
-			boxes[i].texture = ResourceLoader.load("res://Resourcen/Inventories/items/basic/pixil-frame-0 (1).png")
+		if items[counter] == "":
+			boxes[i].texture = null
 		else:
-			boxes[i].texture = ResourceLoader.load("res://Resourcen/Inventories/items/basic/0.png")
+			boxes[i].texture = ResourceLoader.load("res://Resourcen/Inventories/items/basic/pixil-frame-0 (" + items[i] + ").png")
 		boxes[i].set_position(Vector2(_boxes[i].x, _boxes[i].y))
 		boxes[i].size = Vector2(sizeOfItems, sizeOfItems)
 		add_child(boxes[i])
@@ -50,7 +50,7 @@ func takeItem(clickedPosition, draggedItem):
 		return false
 
 func setTexture(counter : int):
-	if items[counter] == "a":
-		boxes[counter].texture = ResourceLoader.load("res://Resourcen/Inventories/items/basic/pixil-frame-0 (1).png")
+	if items[counter] == "":
+		boxes[counter].texture = null
 	else:
-		boxes[counter].texture = null #ResourceLoader.load("res://Resourcen/Inventories/items/basic/0.png")
+		boxes[counter].texture = ResourceLoader.load("res://Resourcen/Inventories/items/basic/pixil-frame-0 (" + items[counter] + ").png")
