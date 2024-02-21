@@ -27,6 +27,8 @@ func _physics_process(delta):
 		if Input.is_action_just_pressed("EPressed"):
 			inventoryInstance.openInventory()
 			inventoryOpen = true
+			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+			cameraInstance.process_mode = Node.PROCESS_MODE_DISABLED
 		if is_on_floor():
 			velocity.x = 0
 			velocity.z = 0
@@ -63,6 +65,8 @@ func _physics_process(delta):
 		if Input.is_action_just_pressed("EPressed"):
 			inventoryInstance.closeInventory()
 			inventoryOpen = false
+			cameraInstance.process_mode = Node.PROCESS_MODE_INHERIT
+			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	move_and_slide()
 	if jumpCooldown > 0:
 		jumpCooldown -= 1
@@ -73,9 +77,11 @@ func _physics_process(delta):
 	if Input.is_action_just_pressed("ui_cancel") and inventoryOpen:
 		inventoryInstance.closeInventory()
 		inventoryOpen = false
+		cameraInstance.process_mode = Node.PROCESS_MODE_INHERIT
+		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 func _input(event):
-	if event.is_action_pressed("LeftClick"):
+	if event.is_action_pressed("LeftClick") and not inventoryOpen:
 		if event.button_index == 1: # 1 == left
 			var camera:Camera3D
 			camera = cameraInstance.get_child(0).get_child(0)
@@ -85,6 +91,8 @@ func _input(event):
 			if (not collision.is_empty()):
 				if (position.distance_squared_to(collision.position) < 5):
 					collision.collider.get_parent().get_parent().startDestroy(collision.position, camera.project_ray_normal(event.position))
+	if event.is_action_pressed("LeftClick") and inventoryOpen:
+		inventoryInstance.handleClick(event.position)
 	
 
 func continueGame():

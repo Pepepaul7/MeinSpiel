@@ -145,14 +145,16 @@ func _draw_block_mesh(surface_tool, block_sub_position, block_id):
 	var verts = calculate_block_verts(block_sub_position)
 	var uvs_one = _calculate_block_uvs_one(block_id)
 	var uvs_two = _calculate_block_uvs_two(block_id)
-	var uvs_dirtBottomOne = _calculate_block_uvs_one(2)
-	var uvs_dirtBottomTwo = _calculate_block_uvs_two(2)
-	var uvs_dirtSideOne = _calculate_block_uvs_one(3)
-	var uvs_dirtSideTwo = _calculate_block_uvs_two(3)
+	var uvs_dirtBottomOne
+	var uvs_dirtBottomTwo
+	var uvs_dirtSideOne
+	var uvs_dirtSideTwo
 
 	# Es wird überprüft, ob der Block von hier sichtbar ist
 	if (!blocks.has(block_sub_position - Vector3(0, 1, 0))):
 		if block_id == 0:
+			uvs_dirtBottomOne = _calculate_block_uvs_one(2)
+			uvs_dirtBottomTwo = _calculate_block_uvs_two(2)
 			_draw_block_face(surface_tool, [verts[5], verts[4], verts[0]], uvs_dirtBottomOne, Vector3(0, -1, 0)) #Bottom
 			_draw_block_face(surface_tool, [verts[5], verts[0], verts[1]], uvs_dirtBottomTwo, Vector3(0, -1, 0))
 		else:
@@ -165,6 +167,9 @@ func _draw_block_mesh(surface_tool, block_sub_position, block_id):
 	
 	if (!blocks.has(block_sub_position + Vector3(1, 0, 0))):
 		if block_id == 0:
+			if uvs_dirtSideOne == null:
+				uvs_dirtSideOne = _calculate_block_uvs_one(3)
+				uvs_dirtSideTwo = _calculate_block_uvs_two(3)
 			_draw_block_face(surface_tool, [verts[6], verts[4], verts[5]], uvs_dirtSideOne, Vector3(1, 0, 0)) #North
 			_draw_block_face(surface_tool, [verts[6], verts[5], verts[7]], uvs_dirtSideTwo, Vector3(1, 0, 0))
 		else:
@@ -173,6 +178,9 @@ func _draw_block_mesh(surface_tool, block_sub_position, block_id):
 	
 	if (!blocks.has(block_sub_position + Vector3(0, 0, 1))):
 		if block_id == 0:
+			if uvs_dirtSideOne == null:
+				uvs_dirtSideOne = _calculate_block_uvs_one(3)
+				uvs_dirtSideTwo = _calculate_block_uvs_two(3)
 			_draw_block_face(surface_tool, [verts[7], verts[5], verts[1]], uvs_dirtSideOne, Vector3(0, 0, 1)) #East
 			_draw_block_face(surface_tool, [verts[7], verts[1], verts[3]], uvs_dirtSideTwo, Vector3(0, 0, 1))
 		else:
@@ -181,6 +189,9 @@ func _draw_block_mesh(surface_tool, block_sub_position, block_id):
 	
 	if (!blocks.has(block_sub_position - Vector3(1, 0, 0))):
 		if block_id == 0:
+			if uvs_dirtSideOne == null:
+				uvs_dirtSideOne = _calculate_block_uvs_one(3)
+				uvs_dirtSideTwo = _calculate_block_uvs_two(3)
 			_draw_block_face(surface_tool, [verts[3], verts[1], verts[0]], uvs_dirtSideOne, Vector3(-1, 0, 0)) #South
 			_draw_block_face(surface_tool, [verts[3], verts[0], verts[2]], uvs_dirtSideTwo, Vector3(-1, 0, 0))
 		else:
@@ -189,6 +200,9 @@ func _draw_block_mesh(surface_tool, block_sub_position, block_id):
 	
 	if (!blocks.has(block_sub_position - Vector3(0, 0, 1))):
 		if block_id == 0:
+			if uvs_dirtSideOne == null:
+				uvs_dirtSideOne = _calculate_block_uvs_one(3)
+				uvs_dirtSideTwo = _calculate_block_uvs_two(3)
 			_draw_block_face(surface_tool, [verts[2], verts[0], verts[4]], uvs_dirtSideOne, Vector3(0, 0, -1)) #West
 			_draw_block_face(surface_tool, [verts[2], verts[4], verts[6]], uvs_dirtSideTwo, Vector3(0, 0, -1))
 		else:
