@@ -55,4 +55,5 @@ func setTexture(counter : int):
 		boxes[counter].texture = ResourceLoader.load("res://Resourcen/Inventories/items/basic/" + items[counter].left(3) + ".png")
 
 func saveInventory():
+	print(items.size())
 	return JSON.parse_string(JSON.stringify(items))

@@ -17,7 +17,8 @@ func addHotbar(items):
 	var boxes = []
 	for i in 9:
 		boxes.append(Vector2(i * sizeOfItems, 0))
-		items.append("002, 10")
+		#Nur zum Neuladen der Items
+		#items[i] = "002, 10"
 	currentHeight = sizeOfItems
 	currentWidth = sizeOfItems * 9
 	currentInventory = inventoryBlueprint.new(Vector2((get_viewport().size.x / 2) - (currentWidth / 2) , get_viewport().size.y * 0.85), Vector2(sizeOfItems * 9, sizeOfItems), "res://Resourcen/hotbar2.png", boxes, items, sizeOfItems)
@@ -29,7 +30,8 @@ func addMainInventory(items):
 	for i in 3:
 		for j in 9:
 			boxes.append(Vector2(j * sizeOfItems, i * sizeOfItems))
-			items.append("001, 10")
+			#Nur zum Neuladen der Items
+			#items[j + i * 9] = "001, 10"
 	currentHeight = sizeOfItems * 3
 	currentWidth = sizeOfItems * 9
 	currentInventory = inventoryBlueprint.new(Vector2((get_viewport().size.x / 2) - (currentWidth / 2) , (get_viewport().size.y / 2) - (currentHeight / 2)), Vector2(currentWidth, currentHeight), "res://Resourcen/inventory.png", boxes, items, sizeOfItems)
