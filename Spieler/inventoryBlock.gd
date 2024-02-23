@@ -8,7 +8,7 @@ var imageLink : String
 var boxes = [] #TextureRect with position and height
 var items = [] #Item Strings
 var background : TextureRect
-var sizeOfItems
+var sizeOfItems : int
 
 func _init(_topLeft, _size, _imageLink, _boxes, _items, _sizeOfItems):
 	size = _size
@@ -21,13 +21,12 @@ func _init(_topLeft, _size, _imageLink, _boxes, _items, _sizeOfItems):
 	background.size = size
 	self.position = topLeft
 	add_child(background)
-	var counter = 0
 	for i in _boxes.size():
 		boxes.append(TextureRect.new())
-		if items[counter] == "":
+		if items[i] == "":
 			boxes[i].texture = null
 		else:
-			boxes[i].texture = ResourceLoader.load("res://Resourcen/Inventories/items/basic/pixil-frame-0 (" + items[i] + ").png")
+			boxes[i].texture = ResourceLoader.load("res://Resourcen/Inventories/items/basic/" + items[i].left(3) + ".png")
 		boxes[i].set_position(Vector2(_boxes[i].x, _boxes[i].y))
 		boxes[i].size = Vector2(sizeOfItems, sizeOfItems)
 		add_child(boxes[i])
@@ -53,4 +52,7 @@ func setTexture(counter : int):
 	if items[counter] == "":
 		boxes[counter].texture = null
 	else:
-		boxes[counter].texture = ResourceLoader.load("res://Resourcen/Inventories/items/basic/pixil-frame-0 (" + items[counter] + ").png")
+		boxes[counter].texture = ResourceLoader.load("res://Resourcen/Inventories/items/basic/" + items[counter].left(3) + ".png")
+
+func saveInventory():
+	return JSON.parse_string(JSON.stringify(items))

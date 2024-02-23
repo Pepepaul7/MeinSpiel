@@ -16,10 +16,12 @@ func _ready():
 	#Buttons for exit/save
 	$ExitAndSave.position = (Vector2(get_viewport().size) - $ExitAndSave.size) / 2
 	$ExitAndSave/Continue.connect("pressed", continueGame);
-	$ExitAndSave/SaveButton.connect("pressed", get_parent().saveGame);
+	$ExitAndSave/SaveButton.connect("pressed", saveAll);
 	#inventoryInstance.drawHotbar()
 	
-	
+func saveAll():
+	inventoryInstance.saveInventories()
+	get_parent().saveGame
 	
 func _physics_process(delta):
 #Jumping/Falling

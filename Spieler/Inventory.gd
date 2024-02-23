@@ -11,28 +11,25 @@ var draggedItem : String #Current dragging Item
 func _ready():
 	sizeOfItems = (get_viewport().size.x * 1/3 / 8)
 	draggedItem = ""
-	addHotbar()
-	addMainInventory()
+	loadInventories()
 
-func addHotbar():
+func addHotbar(items):
 	var boxes = []
-	var items = []
 	for i in 9:
 		boxes.append(Vector2(i * sizeOfItems, 0))
-		items.append("2")
+		items.append("002, 10")
 	currentHeight = sizeOfItems
 	currentWidth = sizeOfItems * 9
 	currentInventory = inventoryBlueprint.new(Vector2((get_viewport().size.x / 2) - (currentWidth / 2) , get_viewport().size.y * 0.85), Vector2(sizeOfItems * 9, sizeOfItems), "res://Resourcen/hotbar2.png", boxes, items, sizeOfItems)
 	add_child(currentInventory)
 	inventories.append(currentInventory)
 	
-func addMainInventory():
+func addMainInventory(items):
 	var boxes = []
-	var items = []
 	for i in 3:
 		for j in 9:
 			boxes.append(Vector2(j * sizeOfItems, i * sizeOfItems))
-			items.append("1")
+			items.append("001, 10")
 	currentHeight = sizeOfItems * 3
 	currentWidth = sizeOfItems * 9
 	currentInventory = inventoryBlueprint.new(Vector2((get_viewport().size.x / 2) - (currentWidth / 2) , (get_viewport().size.y / 2) - (currentHeight / 2)), Vector2(currentWidth, currentHeight), "res://Resourcen/inventory.png", boxes, items, sizeOfItems)
@@ -58,7 +55,6 @@ func dragItem(positionOfClick):
 	
 func dropItem():
 	draggedItem = ""
-	print("DropItem")
 	
 
 func openInventory():
@@ -67,3 +63,19 @@ func openInventory():
 func closeInventory():
 	for i in inventories.size() - 1:
 		inventories[i + 1].visible = false
+
+func loadInventories():
+	var file : String
+	file = FileAccess.get_file_as_string("res://Resourcen/inventoryDataPlayer.json")
+	var items = []
+	items = JSON.parse_string(file)
+	addHotbar(items[0])
+	addMainInventory(items[1])
+
+func saveInventories():
+	var filePath = FileAccess.open("res://Resourcen/inventoryDataPlayer.json", FileAccess.WRITE)
+	var items = []
+	for i in inventories:
+		items.append(i.items)
+	filePath.store_string(JSON.stringify(items))
+	filePath.close()
