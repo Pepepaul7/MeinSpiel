@@ -11,7 +11,17 @@ var draggedItem : String #Current dragging Item
 func _ready():
 	sizeOfItems = (get_viewport().size.x * 1/3 / 8)
 	draggedItem = ""
+	#newInventories()
 	loadInventories()
+
+func newInventories():
+	var items = {}
+	for i in 9:
+		items[i] = "002, 10"
+	addHotbar(items)
+	for i in 19:
+		items[8 + i] = "001, 10"
+	addMainInventory(items)
 
 func addHotbar(items):
 	var boxes = []
@@ -21,7 +31,7 @@ func addHotbar(items):
 		#items[i] = "002, 10"
 	currentHeight = sizeOfItems
 	currentWidth = sizeOfItems * 9
-	currentInventory = inventoryBlueprint.new(Vector2((get_viewport().size.x / 2) - (currentWidth / 2) , get_viewport().size.y * 0.85), Vector2(sizeOfItems * 9, sizeOfItems), "res://Resourcen/hotbar2.png", boxes, items, sizeOfItems)
+	currentInventory = inventoryBlueprint.new(Vector2((get_viewport().size.x / 2) - (currentWidth / 2) , get_viewport().size.y * 0.85), Vector2(sizeOfItems * 9, sizeOfItems), "res://Resourcen/hotbar2.png", boxes, items, sizeOfItems, 0, "hotbar")
 	add_child(currentInventory)
 	inventories.append(currentInventory)
 	
@@ -34,7 +44,7 @@ func addMainInventory(items):
 			#items[j + i * 9] = "001, 10"
 	currentHeight = sizeOfItems * 3
 	currentWidth = sizeOfItems * 9
-	currentInventory = inventoryBlueprint.new(Vector2((get_viewport().size.x / 2) - (currentWidth / 2) , (get_viewport().size.y / 2) - (currentHeight / 2)), Vector2(currentWidth, currentHeight), "res://Resourcen/inventory.png", boxes, items, sizeOfItems)
+	currentInventory = inventoryBlueprint.new(Vector2((get_viewport().size.x / 2) - (currentWidth / 2) , (get_viewport().size.y / 2) - (currentHeight / 2)), Vector2(currentWidth, currentHeight), "res://Resourcen/inventory.png", boxes, items, sizeOfItems, 1, "mainInventory")
 	add_child(currentInventory)
 	currentInventory.visible = false
 	inventories.append(currentInventory)
@@ -69,15 +79,27 @@ func closeInventory():
 func loadInventories():
 	var file : String
 	file = FileAccess.get_file_as_string("res://Resourcen/inventoryDataPlayer.json")
-	var items = []
+	var items : Dictionary
 	items = JSON.parse_string(file)
-	addHotbar(items[0])
-	addMainInventory(items[1])
+	var itemTypes : Dictionary
+	itemTypes = items["0"]
+	print(itemTypes)
+	for i in itemTypes.keys():
+		match itemTypes[str(i)]:
+			"hotbar":
+				addHotbar(items[ str(int(i) + 1)])
+			"mainInventory":
+				addMainInventory(items[str(int(i) + 1)])
+	
+	
 
 func saveInventories():
 	var filePath = FileAccess.open("res://Resourcen/inventoryDataPlayer.json", FileAccess.WRITE)
-	var items = []
+	var items : Dictionary
+	var inventoryTypes : Dictionary
 	for i in inventories:
-		items.append(i.items)
+		items[i.id + 1] = i.items
+		inventoryTypes[i.id] = i.inventoryType
+	items[0] = inventoryTypes
 	filePath.store_string(JSON.stringify(items))
 	filePath.close()
