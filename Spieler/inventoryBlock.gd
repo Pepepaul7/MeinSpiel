@@ -61,3 +61,11 @@ func setTexture(counter : int):
 func saveInventory():
 	print(items.size())
 	return JSON.parse_string(JSON.stringify(items))
+
+func spawnText(clickedPosition):
+	if clickedPosition.y < topLeft.y + size.y and clickedPosition.y > topLeft.y and clickedPosition.x < topLeft.x + size.x and clickedPosition.x > topLeft.x:
+		var newClickedPosition = clickedPosition - topLeft
+		for i in boxes.size():
+			if newClickedPosition.x < boxes[i].position.x + sizeOfItems and newClickedPosition.y < boxes[i].position.y + sizeOfItems and newClickedPosition.x > boxes[i].position.x and newClickedPosition.y > boxes[i].position.y:
+				print(boxes[i].position)
+				return true

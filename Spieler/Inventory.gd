@@ -52,9 +52,14 @@ func addMainInventory(items):
 #So entstand die Hotbar
 #drawInventory(Vector2(get_viewport().size.x / 3, get_viewport().size.y * 0.9), Vector2(get_viewport().size.x * 2/3, get_viewport().size.y * 0.9 - get_viewport().size.x * 1/3 / 9), 10, 2)
 
-func handleClick(positionOfClick):
+func handleLeftClick(positionOfClick):
 	dragItem(positionOfClick)
-	
+
+func handleRightClick(positionOfClick):
+	var counter = 0
+	while (not inventories[counter].spawnText(positionOfClick)):
+		counter -= 1
+
 func dragItem(positionOfClick):
 	var counter = inventories.size() - 1
 	while (not inventories[counter].takeItem(positionOfClick, draggedItem)):
@@ -63,7 +68,6 @@ func dragItem(positionOfClick):
 			dropItem()
 			Input.set_custom_mouse_cursor(null)
 			break
-	print(counter)
 	
 func dropItem():
 	draggedItem = ""

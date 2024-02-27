@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://ljmc8wsokb2j"]
+
+[node name="Node2D" type="Sprite2D"]
+
+[node name="TakeAmount" type="Button" parent="."]
+anchors_preset = -1
+anchor_right = 8.0
+anchor_bottom = 2.155
+offset_right = 120.0
+offset_bottom = 28.845
+text = "Take amount"
+
+[node name="TakeHalf" type="Button" parent="."]
+offset_top = 31.0
+offset_right = 128.0
+offset_bottom = 62.0
+text = "Take half"
+
+[node name="Drop" type="Button" parent="."]
+offset_top = 62.0
+offset_right = 129.0
+offset_bottom = 93.0
+text = "Drop"
+
+[node name="OpenInventory" type="Button" parent="."]
+offset_top = 93.0
+offset_right = 129.0
+offset_bottom = 124.0
+text = "Open Inventory"
