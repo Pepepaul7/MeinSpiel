@@ -7,10 +7,12 @@ var sizeOfItems : int
 var currentHeight : int
 var currentWidth :int
 var draggedItem : String #Current dragging Item
+var rightClickText = preload("res://Spieler/InventoryRightClickDropDown.tscn").instantiate()
 
 func _ready():
 	sizeOfItems = (get_viewport().size.x * 1/3 / 8)
 	draggedItem = ""
+	rightClickText.visible = false
 	#newInventories()
 	loadInventories()
 
@@ -56,9 +58,17 @@ func handleLeftClick(positionOfClick):
 	dragItem(positionOfClick)
 
 func handleRightClick(positionOfClick):
-	var counter = 0
+	var counter = inventories.size() - 1
 	while (not inventories[counter].spawnText(positionOfClick)):
 		counter -= 1
+		if counter < 0:
+			break
+
+func spawnRightClickDropdown(item, position):
+	rightClickText.position = position
+	rightClickText.visible = true
+	add_child(rightClickText)
+	
 
 func dragItem(positionOfClick):
 	var counter = inventories.size() - 1
@@ -87,7 +97,6 @@ func loadInventories():
 	items = JSON.parse_string(file)
 	var itemTypes : Dictionary
 	itemTypes = items["0"]
-	print(itemTypes)
 	for i in itemTypes.keys():
 		match itemTypes[str(i)]:
 			"hotbar":

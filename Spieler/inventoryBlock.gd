@@ -67,5 +67,5 @@ func spawnText(clickedPosition):
 		var newClickedPosition = clickedPosition - topLeft
 		for i in boxes.size():
 			if newClickedPosition.x < boxes[i].position.x + sizeOfItems and newClickedPosition.y < boxes[i].position.y + sizeOfItems and newClickedPosition.x > boxes[i].position.x and newClickedPosition.y > boxes[i].position.y:
-				print(boxes[i].position)
+				get_parent().spawnRightClickDropdown(items[str(i)], boxes[i].position + topLeft)
 				return true

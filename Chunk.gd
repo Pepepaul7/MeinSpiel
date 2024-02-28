@@ -81,6 +81,12 @@ func addChildForThread(child):
 	thread.wait_to_finish()
 	add_child(child)
 
+func addChildForDelete(child):
+	thread.wait_to_finish()
+	for i in self.get_children():
+		i.queue_free()
+	add_child(child)
+
 func generateChunk(chunkJson):
 	if chunkJson == null:
 		generateBlocks()
@@ -258,6 +264,10 @@ func getNewBlocksFromDifference():
 #Ab hier bisschen Spiellogik
 
 func startDestroy(pos, direction):
+	thread = Thread.new()
+	thread.start(destroyBlock.bind(pos, direction))
+
+func destroyBlock(pos, direction):
 	var hitBlockPosition = Vector3(0,0,0)
 	#Wenn der Block genau der int ist muss auf die Direction geachtet werden, aus der der Spieler schlägt.
 	if (pos.x == int(pos.x) and direction.x < 0):
@@ -274,8 +284,6 @@ func startDestroy(pos, direction):
 		hitBlockPosition.z = floor(pos.z)
 	blocks.erase(hitBlockPosition)
 	differenceBlocks[hitBlockPosition] = -1
-	for i in self.get_children():
-		i.queue_free()
 	var surface_tool = SurfaceTool.new()
 	surface_tool.begin(Mesh.PRIMITIVE_TRIANGLES)
 	# For each block, add data to the SurfaceTool and generate a collider.
@@ -290,5 +298,5 @@ func startDestroy(pos, direction):
 	var mi = MeshInstance3D.new()
 	mi.mesh = array_mesh
 	mi.create_trimesh_collision()
-	add_child(mi)
+	call_deferred("addChildForDelete", mi)
 
