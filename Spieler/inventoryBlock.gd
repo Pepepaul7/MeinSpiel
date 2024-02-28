@@ -11,6 +11,7 @@ var background : TextureRect
 var sizeOfItems : int
 var id : int
 var inventoryType : String
+var selectedItem : int
 
 func _init(_topLeft, _size, _imageLink, _boxes, _items, _sizeOfItems, _id, _inventoryType):
 	size = _size
@@ -67,5 +68,16 @@ func spawnText(clickedPosition):
 		var newClickedPosition = clickedPosition - topLeft
 		for i in boxes.size():
 			if newClickedPosition.x < boxes[i].position.x + sizeOfItems and newClickedPosition.y < boxes[i].position.y + sizeOfItems and newClickedPosition.x > boxes[i].position.x and newClickedPosition.y > boxes[i].position.y:
-				get_parent().spawnRightClickDropdown(items[str(i)], boxes[i].position + topLeft)
+				if items[str(i)] != "":
+					get_parent().spawnRightClickDropdown(items[str(i)], boxes[i].position + topLeft, id)
+					selectedItem = i
 				return true
+
+func dropItem():
+	print("DropItem")
+
+func takeHalf():
+	print("TakeHalf")
+
+func openInventory():
+	print("OpenInventory")

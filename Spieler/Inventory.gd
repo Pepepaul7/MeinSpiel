@@ -8,11 +8,14 @@ var currentHeight : int
 var currentWidth :int
 var draggedItem : String #Current dragging Item
 var rightClickText = preload("res://Spieler/InventoryRightClickDropDown.tscn").instantiate()
+var rightClickTextsize : Vector2
+var rightClickTextVisible = false
 
 func _ready():
 	sizeOfItems = (get_viewport().size.x * 1/3 / 8)
 	draggedItem = ""
 	rightClickText.visible = false
+	rightClickTextsize = Vector2(rightClickText.get_children()[0].size.x, rightClickText.get_children()[0].size.y * rightClickText.get_children().size())
 	#newInventories()
 	loadInventories()
 
@@ -55,18 +58,28 @@ func addMainInventory(items):
 #drawInventory(Vector2(get_viewport().size.x / 3, get_viewport().size.y * 0.9), Vector2(get_viewport().size.x * 2/3, get_viewport().size.y * 0.9 - get_viewport().size.x * 1/3 / 9), 10, 2)
 
 func handleLeftClick(positionOfClick):
-	dragItem(positionOfClick)
+	if not rightClickTextVisible:
+		dragItem(positionOfClick)
+	else:
+		if not (positionOfClick.x < rightClickText.position.x + rightClickTextsize.x and positionOfClick.y < rightClickText.position.y + rightClickTextsize.y and positionOfClick.x > rightClickText.position.x and positionOfClick.y > rightClickText.position.y):
+			rightClickTextVisible = false
+			rightClickText.queue_free()
 
 func handleRightClick(positionOfClick):
 	var counter = inventories.size() - 1
 	while (not inventories[counter].spawnText(positionOfClick)):
-		counter -= 1
-		if counter < 0:
-			break
+			counter -= 1
+			if counter < 0:
+				break
 
-func spawnRightClickDropdown(item, position):
+func spawnRightClickDropdown(item, position, inventory):
+	rightClickText = preload("res://Spieler/InventoryRightClickDropDown.tscn").instantiate()
 	rightClickText.position = position
 	rightClickText.visible = true
+	rightClickTextVisible = true
+	rightClickText.get_children()[1].connect("pressed", inventories[inventory].takeHalf)
+	rightClickText.get_children()[2].connect("pressed", inventories[inventory].dropItem)
+	rightClickText.get_children()[3].connect("pressed", inventories[inventory].openInventory)
 	add_child(rightClickText)
 	
 
