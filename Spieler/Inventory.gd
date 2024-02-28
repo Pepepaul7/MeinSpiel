@@ -62,8 +62,11 @@ func handleLeftClick(positionOfClick):
 		dragItem(positionOfClick)
 	else:
 		if not (positionOfClick.x < rightClickText.position.x + rightClickTextsize.x and positionOfClick.y < rightClickText.position.y + rightClickTextsize.y and positionOfClick.x > rightClickText.position.x and positionOfClick.y > rightClickText.position.y):
-			rightClickTextVisible = false
-			rightClickText.queue_free()
+			closeRightClickText()
+
+func closeRightClickText():
+	rightClickTextVisible = false
+	rightClickText.queue_free()
 
 func handleRightClick(positionOfClick):
 	var counter = inventories.size() - 1

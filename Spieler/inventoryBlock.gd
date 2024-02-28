@@ -42,13 +42,18 @@ func takeItem(clickedPosition, draggedItem):
 		for i in boxes.size():
 			if newClickedPosition.x < boxes[i].position.x + sizeOfItems and newClickedPosition.y < boxes[i].position.y + sizeOfItems and newClickedPosition.x > boxes[i].position.x and newClickedPosition.y > boxes[i].position.y:
 				Input.set_custom_mouse_cursor(null)
-				if items[str(i)] != "":
-					Input.set_custom_mouse_cursor(boxes[i].texture)
-				var zwischenspeicher : String
-				zwischenspeicher = items[str(i)]
-				items[str(i)] = draggedItem
-				get_parent().draggedItem = zwischenspeicher
-				setTexture(i)
+				if items[str(i)].left(3) == draggedItem.left(3) and items[str(i)] != "":
+					setAmountOfItems(i, getAmountOfGivenItem(draggedItem) + getAmountOfItems(i))
+					print(getAmountOfItems(i))
+					get_parent().draggedItem = ""
+				else:
+					if items[str(i)] != "":
+						Input.set_custom_mouse_cursor(boxes[i].texture)
+					var zwischenspeicher : String
+					zwischenspeicher = items[str(i)]
+					items[str(i)] = draggedItem
+					get_parent().draggedItem = zwischenspeicher
+					setTexture(i)
 				return true
 	else:
 		return false
@@ -74,10 +79,40 @@ func spawnText(clickedPosition):
 				return true
 
 func dropItem():
-	print("DropItem")
+	items[str(selectedItem)] = ""
+	boxes[selectedItem].texture = null
+	get_parent().closeRightClickText()
 
 func takeHalf():
-	print("TakeHalf")
+	var draggingAmount : int
+	var stayingAmount : int
+	stayingAmount = getAmountOfItems(selectedItem) / 2
+	draggingAmount = getAmountOfItems(selectedItem) - stayingAmount
+	setAmountOfItems(selectedItem, draggingAmount)
+	get_parent().draggedItem = items[str(selectedItem)]
+	Input.set_custom_mouse_cursor(boxes[selectedItem].texture)
+	if stayingAmount == 0:
+		items[str(selectedItem)] = ""
+		setTexture(selectedItem)
+	else: 
+		setAmountOfItems(selectedItem, stayingAmount)
+	get_parent().closeRightClickText()
+
+func getAmountOfItems(index):
+	var returnvalue : int
+	returnvalue = int(items[str(index)].split(", ", true, 0)[1])
+	return returnvalue
+
+func getAmountOfGivenItem(customItem):
+	return int(customItem.split(", ", true, 0)[1])
+
+func setAmountOfItems(index, value):
+	var newValue = items[str(index)].split(", ", true, 0)
+	newValue[1] = str(value)
+	items[str(index)] = ""
+	for i in newValue:
+		items[str(index)] += i + ", "
+	
 
 func openInventory():
 	print("OpenInventory")
