@@ -76,6 +76,8 @@ func handleRightClick(positionOfClick):
 				break
 
 func spawnRightClickDropdown(item, position, inventory):
+	if rightClickText != null:
+		closeRightClickText()
 	rightClickText = preload("res://Spieler/InventoryRightClickDropDown.tscn").instantiate()
 	rightClickText.position = position
 	rightClickText.visible = true
@@ -96,8 +98,12 @@ func dragItem(positionOfClick):
 			break
 	
 func dropItem():
+	throwItem(draggedItem)
 	draggedItem = ""
 	
+func throwItem(item):
+	print("ThrowItem")
+
 
 func openInventory():
 	inventories[1].visible = true

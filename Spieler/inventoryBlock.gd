@@ -79,6 +79,7 @@ func spawnText(clickedPosition):
 				return true
 
 func dropItem():
+	get_parent().throwItem(items[str(selectedItem)])
 	items[str(selectedItem)] = ""
 	boxes[selectedItem].texture = null
 	get_parent().closeRightClickText()
@@ -110,8 +111,11 @@ func setAmountOfItems(index, value):
 	var newValue = items[str(index)].split(", ", true, 0)
 	newValue[1] = str(value)
 	items[str(index)] = ""
-	for i in newValue:
-		items[str(index)] += i + ", "
+	for i in newValue.size():
+		if (i == newValue.size() - 1):
+			items[str(index)] += newValue[i]
+		else:
+			items[str(index)] += newValue[i] + ", "
 	
 
 func openInventory():
