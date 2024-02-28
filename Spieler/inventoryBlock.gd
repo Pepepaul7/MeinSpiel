@@ -12,6 +12,7 @@ var sizeOfItems : int
 var id : int
 var inventoryType : String
 var selectedItem : int
+var itemAmountBoxes = []
 
 func _init(_topLeft, _size, _imageLink, _boxes, _items, _sizeOfItems, _id, _inventoryType):
 	size = _size
@@ -27,14 +28,12 @@ func _init(_topLeft, _size, _imageLink, _boxes, _items, _sizeOfItems, _id, _inve
 	self.position = topLeft
 	add_child(background)
 	for i in _boxes.size():
+		itemAmountBoxes.append(null)
 		boxes.append(TextureRect.new())
-		if items[str(i)] == "":
-			boxes[i].texture = null
-		else:
-			boxes[i].texture = ResourceLoader.load("res://Resourcen/Inventories/items/basic/" + items[str(i)].left(3) + ".png")
 		boxes[i].set_position(Vector2(_boxes[i].x, _boxes[i].y))
 		boxes[i].size = Vector2(sizeOfItems, sizeOfItems)
 		add_child(boxes[i])
+		setTexture(i)
 
 func takeItem(clickedPosition, draggedItem):
 	if clickedPosition.y < topLeft.y + size.y and clickedPosition.y > topLeft.y and clickedPosition.x < topLeft.x + size.x and clickedPosition.x > topLeft.x:
@@ -44,7 +43,7 @@ func takeItem(clickedPosition, draggedItem):
 				Input.set_custom_mouse_cursor(null)
 				if items[str(i)].left(3) == draggedItem.left(3) and items[str(i)] != "":
 					setAmountOfItems(i, getAmountOfGivenItem(draggedItem) + getAmountOfItems(i))
-					print(getAmountOfItems(i))
+					setTexture(i)
 					get_parent().draggedItem = ""
 				else:
 					if items[str(i)] != "":
@@ -61,7 +60,21 @@ func takeItem(clickedPosition, draggedItem):
 func setTexture(counter : int):
 	if items[str(counter)] == "":
 		boxes[counter].texture = null
+		if itemAmountBoxes[counter] != null:
+			itemAmountBoxes[counter].queue_free()
+		itemAmountBoxes[counter] = null
 	else:
+		if (itemAmountBoxes[counter] == null):
+			var z : RichTextLabel
+			itemAmountBoxes[counter] = RichTextLabel.new()
+			itemAmountBoxes[counter].bbcode_enabled = true
+			itemAmountBoxes[counter].scroll_active = false
+			itemAmountBoxes[counter].text = "[center]" + str(getAmountOfItems(counter)) + "[/center]"
+			itemAmountBoxes[counter].position = boxes[counter].position + Vector2(sizeOfItems * 0.5, sizeOfItems * 0.7)
+			itemAmountBoxes[counter].size = Vector2(sizeOfItems * 3, sizeOfItems) * 0.25
+			add_child(itemAmountBoxes[counter])
+		else:
+			itemAmountBoxes[counter].text = "[center]" + str(getAmountOfItems(counter)) + "[/center]"
 		boxes[counter].texture = ResourceLoader.load("res://Resourcen/Inventories/items/basic/" + items[str(counter)].left(3) + ".png")
 
 func saveInventory():
@@ -94,9 +107,9 @@ func takeHalf():
 	Input.set_custom_mouse_cursor(boxes[selectedItem].texture)
 	if stayingAmount == 0:
 		items[str(selectedItem)] = ""
-		setTexture(selectedItem)
 	else: 
 		setAmountOfItems(selectedItem, stayingAmount)
+	setTexture(selectedItem)
 	get_parent().closeRightClickText()
 
 func getAmountOfItems(index):
