@@ -34,6 +34,12 @@ func _init(_topLeft, _size, _imageLink, _boxes, _items, _sizeOfItems, _id, _inve
 		boxes[i].size = Vector2(sizeOfItems, sizeOfItems)
 		add_child(boxes[i])
 		setTexture(i)
+	if inventoryType != "hotbar" and inventoryType !="mainInventory":
+		addCloseButton()
+		
+
+func addCloseButton():
+	print("AddCloseButton")
 
 func takeItem(clickedPosition, draggedItem):
 	if clickedPosition.y < topLeft.y + size.y and clickedPosition.y > topLeft.y and clickedPosition.x < topLeft.x + size.x and clickedPosition.x > topLeft.x:
