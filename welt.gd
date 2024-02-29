@@ -82,7 +82,6 @@ func renderMapThread(playerpos):
 
 		
 func saveGame():
-	print("Saved")
 	var filePath = FileAccess.open("res://Resourcen/worldData.json", FileAccess.WRITE)
 	for i in loadedChunks:
 		mapJson[Vector2(i.pos.x, i.pos.y)] = i.saveMap()

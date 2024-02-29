@@ -16,10 +16,12 @@ func _ready():
 	#Buttons for exit/save
 	$ExitAndSave.position = (Vector2(get_viewport().size) - $ExitAndSave.size) / 2
 	$ExitAndSave/Continue.connect("pressed", continueGame);
-	$ExitAndSave/SaveButton.connect("pressed", get_parent().saveGame);
+	$ExitAndSave/SaveButton.connect("pressed", saveAll);
 	#inventoryInstance.drawHotbar()
 	
-	
+func saveAll():
+	inventoryInstance.saveInventories()
+	get_parent().saveGame
 	
 func _physics_process(delta):
 #Jumping/Falling
@@ -92,7 +94,9 @@ func _input(event):
 				if (position.distance_squared_to(collision.position) < 5):
 					collision.collider.get_parent().get_parent().startDestroy(collision.position, camera.project_ray_normal(event.position))
 	if event.is_action_pressed("LeftClick") and inventoryOpen:
-		inventoryInstance.handleClick(event.position)
+		inventoryInstance.handleLeftClick(event.position)
+	if event is InputEventMouseButton and event.pressed and inventoryOpen and event.button_index == MOUSE_BUTTON_RIGHT:
+		inventoryInstance.handleRightClick(event.position)
 	
 
 func continueGame():

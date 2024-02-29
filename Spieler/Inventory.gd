@@ -7,35 +7,51 @@ var sizeOfItems : int
 var currentHeight : int
 var currentWidth :int
 var draggedItem : String #Current dragging Item
+var rightClickText = preload("res://Spieler/InventoryRightClickDropDown.tscn").instantiate()
+var rightClickTextsize : Vector2
+var rightClickTextVisible = false
+var items : Dictionary
 
 func _ready():
 	sizeOfItems = (get_viewport().size.x * 1/3 / 8)
 	draggedItem = ""
-	addHotbar()
-	addMainInventory()
+	rightClickText.visible = false
+	rightClickTextsize = Vector2(rightClickText.get_children()[0].size.x, rightClickText.get_children()[0].size.y * rightClickText.get_children().size())
+	#newInventories()
+	loadInventories()
 
-func addHotbar():
+func newInventories():
+	var newItems = {}
+	for i in 9:
+		newItems[i] = "002, 10"
+	addHotbar(newItems)
+	for i in 19:
+		newItems[8 + i] = "001, 10"
+	newItems[0] = "003, 1, 002"
+	addMainInventory(newItems)
+
+func addHotbar(newItems):
 	var boxes = []
-	var items = []
 	for i in 9:
 		boxes.append(Vector2(i * sizeOfItems, 0))
-		items.append("a")
+		#Nur zum Neuladen der Items
+		#items[i] = "002, 10"
 	currentHeight = sizeOfItems
 	currentWidth = sizeOfItems * 9
-	currentInventory = inventoryBlueprint.new(Vector2((get_viewport().size.x / 2) - (currentWidth / 2) , get_viewport().size.y * 0.85), Vector2(sizeOfItems * 9, sizeOfItems), "res://Resourcen/hotbar2.png", boxes, items, sizeOfItems)
+	currentInventory = inventoryBlueprint.new(Vector2((get_viewport().size.x / 2) - (currentWidth / 2) , get_viewport().size.y * 0.85), Vector2(sizeOfItems * 9, sizeOfItems), "res://Resourcen/hotbar2.png", boxes, newItems, sizeOfItems, 0, "hotbar")
 	add_child(currentInventory)
 	inventories.append(currentInventory)
 	
-func addMainInventory():
+func addMainInventory(newItems):
 	var boxes = []
-	var items = []
 	for i in 3:
 		for j in 9:
 			boxes.append(Vector2(j * sizeOfItems, i * sizeOfItems))
-			items.append("a")
+			#Nur zum Neuladen der Items
+			#items[j + i * 9] = "001, 10"
 	currentHeight = sizeOfItems * 3
 	currentWidth = sizeOfItems * 9
-	currentInventory = inventoryBlueprint.new(Vector2((get_viewport().size.x / 2) - (currentWidth / 2) , (get_viewport().size.y / 2) - (currentHeight / 2)), Vector2(currentWidth, currentHeight), "res://Resourcen/inventory.png", boxes, items, sizeOfItems)
+	currentInventory = inventoryBlueprint.new(Vector2((get_viewport().size.x / 2) - (currentWidth / 2) , (get_viewport().size.y / 2) - (currentHeight / 2)), Vector2(currentWidth, currentHeight), "res://Resourcen/inventory.png", boxes, newItems, sizeOfItems, 1, "mainInventory")
 	add_child(currentInventory)
 	currentInventory.visible = false
 	inventories.append(currentInventory)
@@ -43,9 +59,41 @@ func addMainInventory():
 #So entstand die Hotbar
 #drawInventory(Vector2(get_viewport().size.x / 3, get_viewport().size.y * 0.9), Vector2(get_viewport().size.x * 2/3, get_viewport().size.y * 0.9 - get_viewport().size.x * 1/3 / 9), 10, 2)
 
-func handleClick(positionOfClick):
-	dragItem(positionOfClick)
+func handleLeftClick(positionOfClick):
+	if not rightClickTextVisible:
+		dragItem(positionOfClick)
+	else:
+		if not (positionOfClick.x < rightClickText.position.x + rightClickTextsize.x and positionOfClick.y < rightClickText.position.y + rightClickTextsize.y and positionOfClick.x > rightClickText.position.x and positionOfClick.y > rightClickText.position.y):
+			closeRightClickText()
+
+func closeRightClickText():
+	rightClickTextVisible = false
+	rightClickText.queue_free()
+
+func handleRightClick(positionOfClick):
+	var counter = inventories.size() - 1
+	while (not inventories[counter].spawnText(positionOfClick)):
+			counter -= 1
+			if counter < 0:
+				break
+
+func spawnRightClickDropdown(item : String, position, inventory):
+	if rightClickText != null:
+		closeRightClickText()
+	rightClickText = preload("res://Spieler/InventoryRightClickDropDown.tscn").instantiate()
+	rightClickText.position = position
+	rightClickText.visible = true
+	rightClickTextVisible = true
+	rightClickText.get_children()[1].connect("pressed", inventories[inventory].takeHalf)
+	rightClickText.get_children()[2].connect("pressed", inventories[inventory].dropItem)
+	rightClickText.get_children()[3].connect("pressed", inventories[inventory].openInventory)
+	if item.split(", ", true).size() == 3:
+		rightClickText.get_children()[1].connect("pressed", Callable(addBackpackInventory).bind(int(item.right(4)), position))
+	add_child(rightClickText)
 	
+func addBackpackInventory(id : int, position : Vector2):
+	print("OpenBackpack")
+
 func dragItem(positionOfClick):
 	var counter = inventories.size() - 1
 	while (not inventories[counter].takeItem(positionOfClick, draggedItem)):
@@ -54,12 +102,14 @@ func dragItem(positionOfClick):
 			dropItem()
 			Input.set_custom_mouse_cursor(null)
 			break
-	print(counter)
 	
 func dropItem():
+	throwItem(draggedItem)
 	draggedItem = ""
-	print("DropItem")
 	
+func throwItem(item):
+	print("ThrowItem")
+
 
 func openInventory():
 	inventories[1].visible = true
@@ -67,3 +117,35 @@ func openInventory():
 func closeInventory():
 	for i in inventories.size() - 1:
 		inventories[i + 1].visible = false
+
+func loadInventories():
+	var file : String
+	file = FileAccess.get_file_as_string("res://Resourcen/inventoryDataPlayer.json")
+	var itemsFromJson : Dictionary
+	itemsFromJson = JSON.parse_string(file)
+	for i in itemsFromJson.keys():
+		var zwischenspeicher : Dictionary
+		for j in itemsFromJson[i].keys():
+			zwischenspeicher[int(j)] = itemsFromJson[i][j]
+		items[int(i)] = zwischenspeicher
+		
+	var itemTypes : Dictionary
+	itemTypes = items[0]
+	for i in itemTypes.keys():
+		match itemTypes[i]:
+			"hotbar":
+				addHotbar(items[int(i) + 1])
+			"mainInventory":
+				addMainInventory(items[int(i) + 1])
+	
+	
+
+func saveInventories():
+	var filePath = FileAccess.open("res://Resourcen/inventoryDataPlayer.json", FileAccess.WRITE)
+	var inventoryTypes : Dictionary
+	for i in inventories:
+		items[i.id + 1] = i.items
+		inventoryTypes[i.id] = i.inventoryType
+	items[0] = inventoryTypes
+	filePath.store_string(JSON.stringify(items))
+	filePath.close()
