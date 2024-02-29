@@ -41,16 +41,16 @@ func takeItem(clickedPosition, draggedItem):
 		for i in boxes.size():
 			if newClickedPosition.x < boxes[i].position.x + sizeOfItems and newClickedPosition.y < boxes[i].position.y + sizeOfItems and newClickedPosition.x > boxes[i].position.x and newClickedPosition.y > boxes[i].position.y:
 				Input.set_custom_mouse_cursor(null)
-				if items[str(i)].left(3) == draggedItem.left(3) and items[str(i)] != "":
+				if items[i].left(3) == draggedItem.left(3) and items[i] != "":
 					setAmountOfItems(i, getAmountOfGivenItem(draggedItem) + getAmountOfItems(i))
 					setTexture(i)
 					get_parent().draggedItem = ""
 				else:
-					if items[str(i)] != "":
+					if items[i] != "":
 						Input.set_custom_mouse_cursor(boxes[i].texture)
 					var zwischenspeicher : String
-					zwischenspeicher = items[str(i)]
-					items[str(i)] = draggedItem
+					zwischenspeicher = items[i]
+					items[i] = draggedItem
 					get_parent().draggedItem = zwischenspeicher
 					setTexture(i)
 				return true
@@ -58,14 +58,13 @@ func takeItem(clickedPosition, draggedItem):
 		return false
 
 func setTexture(counter : int):
-	if items[str(counter)] == "":
+	if items[counter] == "":
 		boxes[counter].texture = null
 		if itemAmountBoxes[counter] != null:
 			itemAmountBoxes[counter].queue_free()
 		itemAmountBoxes[counter] = null
 	else:
 		if (itemAmountBoxes[counter] == null):
-			var z : RichTextLabel
 			itemAmountBoxes[counter] = RichTextLabel.new()
 			itemAmountBoxes[counter].bbcode_enabled = true
 			itemAmountBoxes[counter].scroll_active = false
@@ -75,7 +74,7 @@ func setTexture(counter : int):
 			add_child(itemAmountBoxes[counter])
 		else:
 			itemAmountBoxes[counter].text = "[center]" + str(getAmountOfItems(counter)) + "[/center]"
-		boxes[counter].texture = ResourceLoader.load("res://Resourcen/Inventories/items/basic/" + items[str(counter)].left(3) + ".png")
+		boxes[counter].texture = ResourceLoader.load("res://Resourcen/Inventories/items/basic/" + items[counter].left(3) + ".png")
 
 func saveInventory():
 	print(items.size())
@@ -86,14 +85,14 @@ func spawnText(clickedPosition):
 		var newClickedPosition = clickedPosition - topLeft
 		for i in boxes.size():
 			if newClickedPosition.x < boxes[i].position.x + sizeOfItems and newClickedPosition.y < boxes[i].position.y + sizeOfItems and newClickedPosition.x > boxes[i].position.x and newClickedPosition.y > boxes[i].position.y:
-				if items[str(i)] != "":
-					get_parent().spawnRightClickDropdown(items[str(i)], boxes[i].position + topLeft, id)
+				if items[i] != "":
+					get_parent().spawnRightClickDropdown(items[i], boxes[i].position + topLeft, id)
 					selectedItem = i
 				return true
 
 func dropItem():
-	get_parent().throwItem(items[str(selectedItem)])
-	items[str(selectedItem)] = ""
+	get_parent().throwItem(items[selectedItem])
+	items[selectedItem] = ""
 	boxes[selectedItem].texture = null
 	get_parent().closeRightClickText()
 
@@ -103,10 +102,10 @@ func takeHalf():
 	stayingAmount = getAmountOfItems(selectedItem) / 2
 	draggingAmount = getAmountOfItems(selectedItem) - stayingAmount
 	setAmountOfItems(selectedItem, draggingAmount)
-	get_parent().draggedItem = items[str(selectedItem)]
+	get_parent().draggedItem = items[selectedItem]
 	Input.set_custom_mouse_cursor(boxes[selectedItem].texture)
 	if stayingAmount == 0:
-		items[str(selectedItem)] = ""
+		items[selectedItem] = ""
 	else: 
 		setAmountOfItems(selectedItem, stayingAmount)
 	setTexture(selectedItem)
@@ -114,21 +113,21 @@ func takeHalf():
 
 func getAmountOfItems(index):
 	var returnvalue : int
-	returnvalue = int(items[str(index)].split(", ", true, 0)[1])
+	returnvalue = int(items[index].split(", ", true, 0)[1])
 	return returnvalue
 
 func getAmountOfGivenItem(customItem):
 	return int(customItem.split(", ", true, 0)[1])
 
 func setAmountOfItems(index, value):
-	var newValue = items[str(index)].split(", ", true, 0)
+	var newValue = items[index].split(", ", true, 0)
 	newValue[1] = str(value)
-	items[str(index)] = ""
+	items[index] = ""
 	for i in newValue.size():
 		if (i == newValue.size() - 1):
-			items[str(index)] += newValue[i]
+			items[index] += newValue[i]
 		else:
-			items[str(index)] += newValue[i] + ", "
+			items[index] += newValue[i] + ", "
 	
 
 func openInventory():
