@@ -39,7 +39,17 @@ func _init(_topLeft, _size, _imageLink, _boxes, _items, _sizeOfItems, _id, _inve
 		
 
 func addCloseButton():
-	print("AddCloseButton")
+	var closeButton : Button
+	closeButton = Button.new()
+	closeButton.position = Vector2(size.x - sizeOfItems / 2, - sizeOfItems / 2)
+	closeButton.size = Vector2(sizeOfItems / 2, sizeOfItems / 2)
+	closeButton.connect("pressed", closeInventory)
+	add_child(closeButton)
+
+func closeInventory():
+	self.visible = false
+	get_parent().saveOneInventory(id, items, inventoryType)
+	get_parent().killInventory(id)
 
 func takeItem(clickedPosition, draggedItem):
 	if clickedPosition.y < topLeft.y + size.y and clickedPosition.y > topLeft.y and clickedPosition.x < topLeft.x + size.x and clickedPosition.x > topLeft.x:
@@ -83,7 +93,6 @@ func setTexture(counter : int):
 		boxes[counter].texture = ResourceLoader.load("res://Resourcen/Inventories/items/basic/" + items[counter].left(3) + ".png")
 
 func saveInventory():
-	print(items.size())
 	return JSON.parse_string(JSON.stringify(items))
 
 func spawnText(clickedPosition):
