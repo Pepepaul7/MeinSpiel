@@ -60,9 +60,6 @@ func addMainInventory(newItems):
 	currentInventory.visible = false
 	inventories.append(currentInventory)
 
-#So entstand die Hotbar
-#drawInventory(Vector2(get_viewport().size.x / 3, get_viewport().size.y * 0.9), Vector2(get_viewport().size.x * 2/3, get_viewport().size.y * 0.9 - get_viewport().size.x * 1/3 / 9), 10, 2)
-
 func handleLeftClick(positionOfClick):
 	if not rightClickTextVisible:
 		dragItem(positionOfClick)
@@ -140,11 +137,18 @@ func saveType(newType : String):
 
 func dragItem(positionOfClick):
 	var counter = inventories.size() - 1
-	while (not inventories[counter].takeItem(positionOfClick, draggedItem)):
-		counter -= 1
-		if (counter < 0):
-			dropItem()
-			Input.set_custom_mouse_cursor(null)
+	var returnValue : int
+	while (true):
+		returnValue = inventories[counter].takeItem(positionOfClick, draggedItem)
+		if (returnValue == 1):
+			break
+		elif (returnValue == 0):
+			counter -= 1
+			if (counter < 0):
+				dropItem()
+				Input.set_custom_mouse_cursor(null)
+				break
+		elif (returnValue == -1):
 			break
 	
 func dropItem():
@@ -200,4 +204,5 @@ func killInventory(id : int):
 		if inventories[i].id == id:
 			inventories[i].queue_free()
 			inventories.remove_at(i)
+			break
 			

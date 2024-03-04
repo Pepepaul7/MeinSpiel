@@ -53,6 +53,9 @@ func closeInventory():
 
 func takeItem(clickedPosition, draggedItem):
 	if clickedPosition.y < topLeft.y + size.y and clickedPosition.y > topLeft.y and clickedPosition.x < topLeft.x + size.x and clickedPosition.x > topLeft.x:
+		if draggedItem != "":
+			if draggedItem.split(", ", true, 0)[0] == "003" and inventoryType == "backpack":
+				return -1
 		var newClickedPosition = clickedPosition - topLeft
 		for i in boxes.size():
 			if newClickedPosition.x < boxes[i].position.x + sizeOfItems and newClickedPosition.y < boxes[i].position.y + sizeOfItems and newClickedPosition.x > boxes[i].position.x and newClickedPosition.y > boxes[i].position.y:
@@ -69,9 +72,9 @@ func takeItem(clickedPosition, draggedItem):
 					items[i] = draggedItem
 					get_parent().draggedItem = zwischenspeicher
 					setTexture(i)
-				return true
+				return 1
 	else:
-		return false
+		return 0
 
 func setTexture(counter : int):
 	if items[counter] == "":
