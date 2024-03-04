@@ -96,7 +96,6 @@ func spawnRightClickDropdown(item : String, position, inventory):
 	
 func addBackpackInventory(id : int, position : Vector2):
 	addBackpackToData(id)
-	print(id)
 	var newItems = items[id + 1]
 	var boxes = []
 	currentHeight = sizeOfItems * 3
@@ -109,12 +108,26 @@ func addBackpackInventory(id : int, position : Vector2):
 	add_child(currentInventory)
 	closeRightClickText()
 
+func spawnNewBackpack():
+	var newId : int
+	newId = getNewId()
+	print(newId)
+	Input.set_custom_mouse_cursor(ResourceLoader.load("res://Resourcen/Inventories/items/basic/003.png"))
+	addBackpackToData(newId)
+	draggedItem = "003, 1, " + str(newId)
+
 func addBackpackToData(id : int):
 	if not items[0].has(id) :
 		items[id + 1] = {}
 		for i in 9:
 			items[id + 1][i] = ""
 		inventoryTypes[id] = "backpack"
+
+func getNewId():
+	for i in items[0].size():
+		if not items[0].has(i):
+			return i
+	return items[0].size()
 
 func saveType(newType : String):
 	var counter = 0
@@ -160,10 +173,9 @@ func loadInventories():
 			zwischenspeicher[int(j)] = itemsFromJson[i][j]
 		items[int(i)] = zwischenspeicher
 		
-	var itemTypes : Dictionary
-	itemTypes = items[0]
-	for i in itemTypes.keys():
-		match itemTypes[i]:
+	inventoryTypes = items[0]
+	for i in inventoryTypes.keys():
+		match inventoryTypes[i]:
 			"hotbar":
 				addHotbar(items[int(i) + 1])
 			"mainInventory":

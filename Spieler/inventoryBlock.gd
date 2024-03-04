@@ -57,7 +57,7 @@ func takeItem(clickedPosition, draggedItem):
 		for i in boxes.size():
 			if newClickedPosition.x < boxes[i].position.x + sizeOfItems and newClickedPosition.y < boxes[i].position.y + sizeOfItems and newClickedPosition.x > boxes[i].position.x and newClickedPosition.y > boxes[i].position.y:
 				Input.set_custom_mouse_cursor(null)
-				if items[i].left(3) == draggedItem.left(3) and items[i] != "":
+				if items[i].left(3) == draggedItem.left(3) and items[i] != "" and draggedItem.left(3) != "003":
 					setAmountOfItems(i, getAmountOfGivenItem(draggedItem) + getAmountOfItems(i))
 					setTexture(i)
 					get_parent().draggedItem = ""
