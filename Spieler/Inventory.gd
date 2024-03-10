@@ -205,4 +205,7 @@ func killInventory(id : int):
 			inventories[i].queue_free()
 			inventories.remove_at(i)
 			break
-			
+
+#Neues Inventar wird übergeben. Neue Id wird für Player gesetzt und in JSON integriert. ID in Welt muss noch überlegt werden
+func getNewInventory():
+	print("neuesInventarAusWorld") 

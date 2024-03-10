@@ -43,7 +43,7 @@ func addCloseButton():
 	closeButton = Button.new()
 	closeButton.position = Vector2(size.x - sizeOfItems / 2, - sizeOfItems / 2)
 	closeButton.size = Vector2(sizeOfItems / 2, sizeOfItems / 2)
-	closeButton.connect("pressed", closeInventory)
+	closeButton.mouse_filter = Control.MOUSE_FILTER_STOP
 	add_child(closeButton)
 
 func closeInventory():
@@ -52,6 +52,11 @@ func closeInventory():
 	get_parent().killInventory(id)
 
 func takeItem(clickedPosition, draggedItem):
+	if inventoryType == "backpack":
+		var closeButton = Vector2(size.x - sizeOfItems / 2, - sizeOfItems / 2) + topLeft
+		if clickedPosition.x < closeButton.x + sizeOfItems and clickedPosition.y < closeButton.y + sizeOfItems and clickedPosition.x > closeButton.x and clickedPosition.y > closeButton.y:
+			closeInventory()
+			return 1
 	if clickedPosition.y < topLeft.y + size.y and clickedPosition.y > topLeft.y and clickedPosition.x < topLeft.x + size.x and clickedPosition.x > topLeft.x:
 		if draggedItem != "":
 			if draggedItem.split(", ", true, 0)[0] == "003" and inventoryType == "backpack":
@@ -146,7 +151,3 @@ func setAmountOfItems(index, value):
 			items[index] += newValue[i]
 		else:
 			items[index] += newValue[i] + ", "
-	
-
-func openInventory():
-	print("OpenInventory")
