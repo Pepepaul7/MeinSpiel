@@ -1,5 +1,7 @@
 extends Node2D
 
+#Als Nächstes moveable intentories
+
 class_name InventoryBlock
 
 var size : Vector2
@@ -13,6 +15,8 @@ var id : int
 var inventoryType : String
 var selectedItem : int
 var itemAmountBoxes = []
+var draggingInventory : bool
+var moveButton : Button
 
 func _init(_topLeft, _size, _imageLink, _boxes, _items, _sizeOfItems, _id, _inventoryType):
 	size = _size
@@ -22,6 +26,7 @@ func _init(_topLeft, _size, _imageLink, _boxes, _items, _sizeOfItems, _id, _inve
 	sizeOfItems = _sizeOfItems
 	id = _id
 	inventoryType = _inventoryType
+	draggingInventory = false
 	background = TextureRect.new()
 	background.texture = ResourceLoader.load(imageLink)
 	background.size = size
@@ -34,14 +39,50 @@ func _init(_topLeft, _size, _imageLink, _boxes, _items, _sizeOfItems, _id, _inve
 		boxes[i].size = Vector2(sizeOfItems, sizeOfItems)
 		add_child(boxes[i])
 		setTexture(i)
+	if inventoryType != "hotbar" and inventoryType !="mainInventory":
+		addCloseButton()
+		addMoveButton()
+		
+
+func addCloseButton():
+	var closeButton : Button
+	closeButton = Button.new()
+	closeButton.position = Vector2(size.x - sizeOfItems / 2, - sizeOfItems / 2)
+	closeButton.size = Vector2(sizeOfItems / 2, sizeOfItems / 2)
+	closeButton.mouse_filter = Control.MOUSE_FILTER_STOP
+	add_child(closeButton)
+
+func addMoveButton():
+	moveButton = Button.new()
+	moveButton.position =  - Vector2(sizeOfItems / 2, sizeOfItems / 2)
+	moveButton.size = Vector2(sizeOfItems / 2, sizeOfItems / 2)
+	moveButton.mouse_filter = Control.MOUSE_FILTER_STOP
+	moveButton.connect("pressed", moveInventory)
+	add_child(moveButton)
+
+func closeInventory():
+	self.visible = false
+	get_parent().saveOneInventory(id, items, inventoryType)
+	get_parent().killInventory(id)
 
 func takeItem(clickedPosition, draggedItem):
+	if inventoryType == "backpack":
+		var closeButton = Vector2(size.x - sizeOfItems / 2, - sizeOfItems / 2) + topLeft
+		if clickedPosition.x < closeButton.x + sizeOfItems and clickedPosition.y < closeButton.y + sizeOfItems and clickedPosition.x > closeButton.x and clickedPosition.y > closeButton.y:
+			closeInventory()
+			return 1
+		closeButton = topLeft - Vector2(sizeOfItems/ 2, sizeOfItems / 2)
+		if clickedPosition.x < closeButton.x + sizeOfItems and clickedPosition.y < closeButton.y + sizeOfItems and clickedPosition.x > closeButton.x and clickedPosition.y > closeButton.y:
+			return 1
 	if clickedPosition.y < topLeft.y + size.y and clickedPosition.y > topLeft.y and clickedPosition.x < topLeft.x + size.x and clickedPosition.x > topLeft.x:
+		if draggedItem != "":
+			if draggedItem.split(", ", true, 0)[0] == "003" and inventoryType == "backpack":
+				return -1
 		var newClickedPosition = clickedPosition - topLeft
 		for i in boxes.size():
 			if newClickedPosition.x < boxes[i].position.x + sizeOfItems and newClickedPosition.y < boxes[i].position.y + sizeOfItems and newClickedPosition.x > boxes[i].position.x and newClickedPosition.y > boxes[i].position.y:
 				Input.set_custom_mouse_cursor(null)
-				if items[i].left(3) == draggedItem.left(3) and items[i] != "":
+				if items[i].left(3) == draggedItem.left(3) and items[i] != "" and draggedItem.left(3) != "003":
 					setAmountOfItems(i, getAmountOfGivenItem(draggedItem) + getAmountOfItems(i))
 					setTexture(i)
 					get_parent().draggedItem = ""
@@ -53,9 +94,9 @@ func takeItem(clickedPosition, draggedItem):
 					items[i] = draggedItem
 					get_parent().draggedItem = zwischenspeicher
 					setTexture(i)
-				return true
+				return 1
 	else:
-		return false
+		return 0
 
 func setTexture(counter : int):
 	if items[counter] == "":
@@ -77,7 +118,6 @@ func setTexture(counter : int):
 		boxes[counter].texture = ResourceLoader.load("res://Resourcen/Inventories/items/basic/" + items[counter].left(3) + ".png")
 
 func saveInventory():
-	print(items.size())
 	return JSON.parse_string(JSON.stringify(items))
 
 func spawnText(clickedPosition):
@@ -128,7 +168,9 @@ func setAmountOfItems(index, value):
 			items[index] += newValue[i]
 		else:
 			items[index] += newValue[i] + ", "
-	
 
-func openInventory():
-	print("OpenInventory")
+func moveInventory():
+	while (moveButton.pressed):
+		self.position = get_viewport().get_mouse_position()
+		print(position)
+	topLeft = position

@@ -81,6 +81,8 @@ func _physics_process(delta):
 		inventoryOpen = false
 		cameraInstance.process_mode = Node.PROCESS_MODE_INHERIT
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	if Input.is_action_just_pressed("ui_accept") and inventoryOpen:
+		inventoryInstance.spawnNewBackpack()
 
 func _input(event):
 	if event.is_action_pressed("LeftClick") and not inventoryOpen:
