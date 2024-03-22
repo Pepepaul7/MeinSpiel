@@ -1,5 +1,7 @@
 extends Node2D
 
+#Als Nächstes moveable intentories
+
 class_name InventoryBlock
 
 var size : Vector2
@@ -13,6 +15,8 @@ var id : int
 var inventoryType : String
 var selectedItem : int
 var itemAmountBoxes = []
+var draggingInventory : bool
+var moveButton : Button
 
 func _init(_topLeft, _size, _imageLink, _boxes, _items, _sizeOfItems, _id, _inventoryType):
 	size = _size
@@ -22,6 +26,7 @@ func _init(_topLeft, _size, _imageLink, _boxes, _items, _sizeOfItems, _id, _inve
 	sizeOfItems = _sizeOfItems
 	id = _id
 	inventoryType = _inventoryType
+	draggingInventory = false
 	background = TextureRect.new()
 	background.texture = ResourceLoader.load(imageLink)
 	background.size = size
@@ -36,6 +41,7 @@ func _init(_topLeft, _size, _imageLink, _boxes, _items, _sizeOfItems, _id, _inve
 		setTexture(i)
 	if inventoryType != "hotbar" and inventoryType !="mainInventory":
 		addCloseButton()
+		addMoveButton()
 		
 
 func addCloseButton():
@@ -45,6 +51,14 @@ func addCloseButton():
 	closeButton.size = Vector2(sizeOfItems / 2, sizeOfItems / 2)
 	closeButton.mouse_filter = Control.MOUSE_FILTER_STOP
 	add_child(closeButton)
+
+func addMoveButton():
+	moveButton = Button.new()
+	moveButton.position =  - Vector2(sizeOfItems / 2, sizeOfItems / 2)
+	moveButton.size = Vector2(sizeOfItems / 2, sizeOfItems / 2)
+	moveButton.mouse_filter = Control.MOUSE_FILTER_STOP
+	moveButton.connect("pressed", moveInventory)
+	add_child(moveButton)
 
 func closeInventory():
 	self.visible = false
@@ -56,6 +70,9 @@ func takeItem(clickedPosition, draggedItem):
 		var closeButton = Vector2(size.x - sizeOfItems / 2, - sizeOfItems / 2) + topLeft
 		if clickedPosition.x < closeButton.x + sizeOfItems and clickedPosition.y < closeButton.y + sizeOfItems and clickedPosition.x > closeButton.x and clickedPosition.y > closeButton.y:
 			closeInventory()
+			return 1
+		closeButton = topLeft - Vector2(sizeOfItems/ 2, sizeOfItems / 2)
+		if clickedPosition.x < closeButton.x + sizeOfItems and clickedPosition.y < closeButton.y + sizeOfItems and clickedPosition.x > closeButton.x and clickedPosition.y > closeButton.y:
 			return 1
 	if clickedPosition.y < topLeft.y + size.y and clickedPosition.y > topLeft.y and clickedPosition.x < topLeft.x + size.x and clickedPosition.x > topLeft.x:
 		if draggedItem != "":
@@ -151,3 +168,9 @@ func setAmountOfItems(index, value):
 			items[index] += newValue[i]
 		else:
 			items[index] += newValue[i] + ", "
+
+func moveInventory():
+	while (moveButton.pressed):
+		self.position = get_viewport().get_mouse_position()
+		print(position)
+	topLeft = position
